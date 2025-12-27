@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Atelier Digitale di Scrittura</title>
+    <style>
+        :root { --it-green: #008C45; --it-red: #CD212A; --f: #2980b9; --n: #27ae60; --i: #f39c12; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        .container { max-width: 1000px; margin: auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 8px solid var(--it-green); }
+        
+        /* Sade ve Şık Başlık Tasarımı */
+        .main-header {
+            text-align: center;
+            background: white;
+            padding: 10px 10px;
+            margin: 0;
+            color: #333;
+            font-size: 1.2em;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Başlığın altındaki ince İtalyan şeridi */
+        .header-line {
+            height: 2px;
+            width: 100%;
+            display: flex;
+        }
+        .line-green { background: #008C45; flex: 1; }
+        .line-white { background: #fff; border-top: 1px solid #eee; border-bottom: 1px solid #eee; flex: 1; }
+        .line-red { background: #CD212A; flex: 1; }
+
+        /* Başlığın altındaki ince İtalyan şeridi */
+        .header-line {
+            height: 2px;
+            width: 100%;
+            display: flex;
+        }
+        .line-green { background: var(--it-green); flex: 1; }
+        .line-white { background: #eee; flex: 1; }
+        .line-red { background: var(--it-red); flex: 1; }
+
+       /* Klavye Karakterleri */
+        .kb { background: #333; padding: 10px; display: flex; justify-content: center; gap: 8px; position: sticky; top: 0; z-index: 1000; }
+        .key { padding: 8px 12px; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        /* Sekmeler */
+        .tabs { display: flex; background: #f8f9fa; border-bottom: 2px solid #ddd; }
+        .tab-btn { flex: 1; padding: 15px; border: none; cursor: pointer; font-weight: bold; background: #f8f9fa; transition: 0.3s; font-size: 1em; }
+        .tab-btn.active { background: white; color: var(--it-green); border-bottom: 4px solid var(--it-green); }
+        
+        .content { display: none; padding: 25px; animation: fadeIn 0.4s; }
+        .content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Form Elemanları */
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #444; }
+        select, input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; font-size: 1em; }
+        
+           /* MASAÜSTÜ GRİD VE GRUP AYARLARI */
+        .email-grid, .sal-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .email-grid div { flex: 1; }
+        #esal-name::placeholder { font-style: italic; color: #999; opacity: 0.7; }
+
+        /* Cümle Bankası */
+        .phrase-bank { background: #f1f8ff; padding: 15px; border-radius: 12px; border: 1px solid #cce5ff; margin-bottom: 15px; }
+        .cat-title { font-size: 0.85em; font-weight: bold; color: var(--it-red); margin: 10px 0 5px 0; text-transform: uppercase; border-bottom: 1px solid #ddd; }
+        .phrase-btn { background: #fff; border: 1px solid #ccc; padding: 6px 12px; margin: 4px; border-radius: 20px; cursor: pointer; font-size: 0.85em; }
+        .phrase-btn:hover { border-color: var(--it-green); background: #eef7f3; }
+
+        /* WhatsApp */
+        .wa-box { background: #e5ddd5 url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); border-radius: 15px; padding: 15px; height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; border: 1px solid #ccc; }
+        .bubble { max-width: 75%; padding: 10px; border-radius: 12px; font-size: 0.9em; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .bubble.mine { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 0; }
+        .bubble.theirs { align-self: flex-start; background: white; border-bottom-left-radius: 0; }
+
+        /* Uyarı ve Önizleme */
+        .warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba; display: none; margin-bottom: 15px; text-align: center; font-weight: bold; }
+        .btn-red { width: 100%; padding: 15px; background: var(--it-red); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1em; }
+        .preview { white-space: pre-wrap; background: #fff; border: 2px dashed #ccc; padding: 20px; margin-top: 15px; display: none; }
+        
+        /* Guida Table & Info */
+        .guide-box { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .guide-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .guide-table td, .guide-table th { border: 1px solid #eee; padding: 12px; font-size: 0.9em; }
+        .guide-table th { background: #f8f9fa; text-align: left; }
+        .nota-tr { color: #888; font-size: 0.8em; font-style: italic; }
+        /* MOBİL UYUMLULUK EKLEMESİ */
+        .table-container { 
+            width: 100%; 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; 
+            margin-bottom: 20px; 
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .email-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Mittente ve Destinatario yan yana */
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        /* Oggetto'nun (3. kutu) alt satıra geçip tüm genişliği kaplamasını sağlar */
+        .email-grid div:nth-child(3) {
+            grid-column: span 2;
+        }
+        
+        @media screen and (max-width: 600px) {
+            /* Yeni 20px Logo İçin Mobil Ayar */
+            .main-header {
+                font-size: 1.1em; /* Yazıyı mobilde biraz küçültüyoruz ki sığsın */
+                padding: 10px;
+                gap: 8px; /* Logo ve yazı arasındaki boşluğu daraltıyoruz */
+            }
+            .italy-small-logo {
+                width: 18px; /* Mobilde logoyu da bir tık küçültebiliriz */
+            }
+            body { padding: 5px; }
+            .container { border-radius: 0; box-shadow: none; width: 100%; }
+            .tab-btn { padding: 10px 5px; font-size: 0.8em; }
+            .content { padding: 15px; }
+            .kb { gap: 4px; padding: 5px; flex-wrap: wrap; }
+            .key { padding: 6px 10px; font-size: 0.9em; flex: 1 1 auto; text-align: center; }
+            .guide-table { font-size: 0.75em; }
+            .guide-table td, .guide-table th { padding: 6px 4px; }
+            .phrase-btn { font-size: 0.75em; padding: 5px 10px; }
+            input, select, textarea { font-size: 0.9em; }
+            .wa-box { height: 300px; }
+ /* Grid ve Selamlama Grubunu Mobilde Alt Alta Yapar */
+            .email-grid, .sal-group { 
+                flex-direction: column !important; 
+                display: flex !important; 
+                gap: 12px; 
+            }
+            .email-grid input, .sal-group input, .sal-group select { 
+                width: 100% !important; 
+                box-sizing: border-box; 
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-header">
+        🇮🇹 L'Atelier Digitale di Scrittura ✍️
+    </div>
+    
+    <div class="header-line">
+        <div class="line-green"></div>
+        <div class="line-white"></div>
+        <div class="line-red"></div>
+    </div>
+
+<div class="header-line">
+    <div class="line-green"></div>
+    <div class="line-white"></div>
+    <div class="line-red"></div>
+</div>
+    
+    <div class="header-line">
+        <div class="line-green" style="height:2px; background:#008C45; flex:1;"></div>
+        <div class="line-white" style="height:2px; background:#eee; flex:1;"></div>
+        <div class="line-red" style="height:2px; background:#CD212A; flex:1;"></div>
+    </div>
+    </div>
+    <div class="kb">
+        <button class="key" onclick="insC('à')">à</button><button class="key" onclick="insC('è')">è</button>
+        <button class="key" onclick="insC('é')">é</button><button class="key" onclick="insC('ì')">ì</button>
+        <button class="key" onclick="insC('ò')">ò</button><button class="key" onclick="insC('ù')">ù</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="tabNav(event, 'email-tab')">📧 Scrivi l'E-mail</button>
+        <button class="tab-btn" onclick="tabNav(event, 'wa-tab')">💬 WhatsApp</button>
+        <button class="tab-btn" onclick="tabNav(event, 'rules-tab')">📖 Guida delle Regole</button>
+    </div>
+
+    <div id="email-tab" class="content active">
+        <div class="email-grid">
+            <div><label>Mittente</label><input type="text" id="efrom" onfocus="curF(this)" placeholder="İsminiz"></div>
+            <div><label>Destinatario</label><input type="text" id="eto" onfocus="curF(this)" placeholder="Alıcı İsmi"></div>
+            <div><label>Oggetto (Konu)</label><input type="text" id="eobj" onfocus="curF(this)" placeholder="Konu..."></div>
+        </div>
+        
+       <label>Saluto Iniziale e Nome <span class="nota-tr">(Hitap + Alıcı İsmi)</span></label>
+        <div class="sal-group">
+            <select id="esal" style="flex: 1.5; margin-bottom: 0;">
+            <optgroup label="Formalità Estrema (FE)">
+                <option value="Sua Santità" data-type="formal">[FE] Sua Santità (Papa)</option>
+                <option value="Onorevole Presidente" data-type="formal">[FE]Onorevole Presidente (Cumhurbaşkanı)</option>
+                <option value="Pregiatissimo Onorevole" data-type="formal">[FE] Pregiatissimo Onorevole (Milletvekili)</option>
+                <option value="Pregiatissimo Signor Ambasciatore" data-type="formal">[F] Signor Ambasciatore (Büyükelçi - Eril)</option>
+                <option value= "Gentilissima Signora Ambasciatrice" data-type="formal">[F] Signora Ambasciatrice (Büyükelçi - Dişil)</option>
+                <option value="Egregio Signor Console" data-type="formal"> [F] Signor Console (Konsolos - Eril)</option>
+                <option value="Egregia Signora Console" data-type="formal">[F] Signora Console (Konsolos - Dişil)</option>
+            </optgroup>
+            <optgroup label="Formale (F)">
+                <option value="Gentile Signore" data-type="formal">[F] Gentile Signore (Bay...)</option>
+                <option value="Gentile Signora" data-type="formal">[F] Gentile Signora (Bayan...)</option>
+                <option value="Egregio Dottore" data-type="formal">[F] Egregio Dottore (Eril Akademik)</option>
+                <option value="Egregia Dottoressa" data-type="formal">[F] Egregia Dottoressa (Dişil Akademik)</option>
+                <option value="A chi di competenza" data-type="formal">A chi di competenza (İlgili Makama)</option>
+            </optgroup>
+            <optgroup label="Formale (Ünvanlar / Titoli)">
+                <option value="Gentile Dottore" data-type="formal">[F] Gentile Dottore</option>
+                <option value="Gentile Dottoressa" data-type="formal">[F] Gentile Dottoressa</option>
+                <option value="Gentile Professore" data-type="formal">[F] Gentile Professore</option>
+                <option value="Gentile Professoressa" data-type="formal">[F] Gentile Professoressa</option>
+                <option value="Gentile Avvocato" data-type="formal">[F] Gentile Avvocato</option>
+                <option value="Gentile Ingegnere" data-type="formal">[F] Gentile Ingegnere</option>
+                <option value="Gentile Architetto" data-type="formal">[F] Gentile Architetto</option>
+            </optgroup>
+            <optgroup label="Informale (I)">
+                <option value="Caro" data-type="informal">[I] Caro (Erkek - Eril)</option>
+                <option value="Cara" data-type="informal">[I] Cara (Kadın - Dişil)</option>
+                <option value="Carissimo" data-type="informal">[I] Carissimo (Erkek - Eril)</option>
+                <option value="Carissima" data-type="informal">[I] Carissima (Kadın - Dişil)</option>   
+                <option value="Ciao" data-type="informal">[I] Ciao</option>
+                <option value="Ehilà" data-type="informal">[I] Ehilà</option>
+                <option value="Buongiorno" data-type="informal">[I] Buongiorno</option>
+            </optgroup>
+        </select>
+        <input type="text" id="esal-name" onfocus="curF(this)" placeholder="Es: Rossi o Giulia..." style="flex: 1; margin-bottom: 0;">
+        </div>
+        <div class="phrase-bank">
+    <label>Banca delle Frasi <span class="nota-tr">(Cümle Bankası - Tıkla ve Ekle)</span></label>
+    
+    <div class="cat-title">Sociale & Informale (Sosyal ve Samimi)</div>
+    <button class="phrase-btn" onclick="p('Ti scrivo per chiederti un favore.')">Chiedere un favore (Bir iyilik istemek için yazıyorum)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Come va? Spero che tutto proceda per il meglio.')">Come va? (Nasıl gidiyor? Umarım her şey yolundadır)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Spero che tu stia bene e che passerai una bella settimana.')">Spero tu stia bene (Umarım iyisindir ve güzel bir hafta geçirirsin)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Volevo solo salutarti e sapere come stai.')">Salutare (Sadece merhaba demek ve nasıl olduğunu bilmek istedim)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Ci sentiamo presto per organizzare qualcosa di bello.')">Ci sentiamo presto (Yakında güzel bir şeyler ayarlamak için haberleşiriz)<b>[I]</b></button>
+
+    <div class="cat-title">Inizio & Richieste (Giriş ve Talepler)</div>
+    <button class="phrase-btn" onclick="p('Le scrivo per avere maggiori informazioni riguardo al corso.')">Richiesta info (Kurs hakkında daha fazla bilgi almak için yazıyorum)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('In allegato alla presente, Le invio il documento richiesto.')">In allegato (Bu yazıya ek olarak, istenen belgeyi sunuyorum)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('Volevo chiederLe se fosse possibile spostare il nostro incontro.')">Spostare incontro (Görüşmemizi ertelemenin mümkün olup olmadığını sormak istedim)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('La contatto per confermare la mia partecipazione all\'evento.')">Conferma (Etkinliğe katılımımı onaylamak için sizinle iletişime geçiyorum)<b>[F]</b></button>
+    
+    <div class="cat-title">Chiusura (Kapanış)</div>
+    <button class="phrase-btn" onclick="p('Resto in attesa di una Sua gentile risposta.')">In attesa di risposta (Nazik cevabınızı bekliyorum)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('Ci sentiamo presto per definire meglio tutti i dettagli.')">Definire dettagli (Tüm detayları netleştirmek için yakında haberleşiriz)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('La ringrazio ancora per la Sua cortese disponibilità.')">Ringraziamento (Nazik müsaitliğiniz için tekrar teşekkür ederim)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('Spero di risentirLa presto e Le auguro una buona giornata.')">Auguri finali (Yakında tekrar görüşmek dileğiyle, iyi günler dilerim)<b>[F]</b></button>
+
+    <div class="cat-title">Appuntamenti & Tecnica (Randevu ve Teknik)</div>
+    <button class="phrase-btn" onclick="p('Ricordate l\'appuntamento di domenica per la nostra gita, vero?')">Ricordate la gita? (Pazar günkü gezi randevusunu hatırlıyorsunuz, değil mi?)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('Vorrei fissare un appuntamento per discutere del nuovo progetto.')">Fissare appuntamento (Yeni projeyi tartışmak için bir randevu ayarlamak isterim)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('Non riesco a scaricare il file; potrebbe inviarmelo di nuovo?')">Errore download (Dosyayı indiremiyorum; tekrar gönderebilir misiniz?)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('Ho riscontrato un problema tecnico con il link che mi ha inviato.')">Problema link (Gönderdiğiniz bağlantıda teknik bir sorunla karşılaştım)<b>[F]</b></button>
+</div>
+        <textarea id="ebody" rows="5" onfocus="curF(this)" placeholder="Il tuo messaggio...(Mesajınız...)"></textarea>
+
+        <label>Saluto finale</label>
+        <select id="esal-fin">
+            <option value="Voglia gradire i miei più devoti ossequi" data-type="formal">[FE] Più devoti ossequi</option>
+            <option value="In attesa di un Suo riscontro, porgo distinti saluti" data-type="formal">[F] In attesa di riscontro, porgo distinti saluti</option>
+            <option value="Distinti saluti" data-type="formal">[F] Distinti saluti</option>
+            <option value="Cordiali saluti" data-type="formal">[N] Cordiali saluti</option>
+            <option value="Un caro saluto" data-type="informal">[I] Un caro saluto / A presto</option>
+            <option value="Un abbraccio" data-type="informal">[I] Un abbraccio</option>
+            <option value="A presto" data-type="informal">[I] A presto</option>
+            <option value="Tanti baci / tvb" data-type="informal">[I] Tanti baci / tvb</option>
+        </select>
+
+        <button class="btn-red" onclick="genE()">Genera Email & Controlla Coerenza</button>
+        
+        <div id="w-box" class="warning">⚠️ Attenzione! Il saluto iniziale e quello finale non sono coerenti. (Dikkat! Başlangıç ve bitiş hitapları birbiriyle uyumlu değil.)</div>
+        <div id="p-box" class="preview"></div>
+    </div>
+
+    <div id="wa-tab" class="content">
+        <div class="wa-box" id="wa-dis">
+            <div class="bubble theirs">Ciao! Tutto bene? Ci vediamo stasera?</div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <input type="text" id="wa-in" onfocus="curF(this)" placeholder="Messaggio...">
+            <button onclick="sw()" style="background:var(--it-green); color:white; border:none; border-radius:50%; width:45px; height:45px;">➤</button>
+        </div>
+        <div style="margin-top:10px;">
+            <label class="nota-tr">Scorciatoie SMS (Kısaltmalar):</label>
+            <button class="phrase-btn" onclick="pwa('cmq')">cmq (comunque)</button>
+            <button class="phrase-btn" onclick="pwa('grz')">grz (grazie)</button>
+            <button class="phrase-btn" onclick="pwa('xké')">xké (perché)</button>
+            <button class="phrase-btn" onclick="pwa('pfv')">pfv (per favore)</button>
+            <button class="phrase-btn" onclick="pwa('tat')">tat (ti amo tanto)</button>
+            <button class="phrase-btn" onclick="pwa('x')">x (per)</button>
+            <button class="phrase-btn" onclick="pwa('tvb')">tvb (ti voglio bene)</button>
+          <div style="margin-top:10px; display: flex; gap: 10px; flex-wrap: wrap;">
+    <button class="phrase-btn" style="background:#e6f9ff; border:1px solid #00aaff;" onclick="parolaGiorno_A1_B1()">💡 Parola del Giorno A1-B1 (Base)</button>
+    <button class="phrase-btn" style="background:#fff9e6; border:1px solid #ffd700;" onclick="parolaGiorno_B1_C1()">💡 Parola del Giorno B1-C1 (Avanzato)</button>
+</div>
+<div style="margin-top:8px;">
+    <small style="color: #666; font-style: italic; display: block;">
+    Nota: World Emoji Day è il 17 luglio 
+    <span style="font-style: normal; display: inline-block;">📅</span> 
+    perciò l'emoji non cambia, ma la parola sì!
+</small>
+</div>
+        </div>
+    </div>
+
+    <div id="rules-tab" class="content">
+        <h3 style="color:var(--it-red);">📖 Guida delle Regole (Digital Netiquette)</h3>
+        
+        <div class="guide-box" style="border-left:5px solid var(--it-red);">
+            <h4>🎯 "Gentile" Nasıl Kullanılır?</h4>
+            <p><i>Gentile</i> İtalyancada en yaygın, nötr ve profesyonel hitaptır. Ancak arkasından mutlaka bir <b>isim</b> veya <b>ünvan</b> gelmelidir. Tek başına "Gentile," demek yanlıştır.</p>
+            <div class="table-container"> <table class="guide-table">
+                <tr style="background:#f8f9fa;"><th>Hitap</th><th>Örnek</th><th>Not</th></tr>
+                <tr><td><b>Gentile + Cognome (Soyadı)</b></td><td>Gentile Signor Rossi</td><td>Soyadı biliniyorsa en resmi olandır.</td></tr>
+                <tr><td><b>Gentile + Titolo (Ünvan)</b></td><td>Gentile Dottore/Dottoressa</td><td>Akademik mezuniyet varsa.</td></tr>
+                <tr><td><b>Gentile + Signore/a</b></td><td>Gentile Signore/Signora</td><td>İsim bilinmiyorsa kullanılır.</td></tr>
+            </table> </div>
+        </div>
+        <div class="guide-box" style="border-left:5px solid #ffa500;">
+    <h4>🎓 Titoli comuni e le loro abbreviazioni (Yaygın Ünvanlar ve Kısaltmaları)</h4>
+    <p>İtalyancada <b>titolo</b> kullanımı, yazışmanın resmiyetini belirler. Kısaltmalar genellikle nokta ile biter:</p>
+    <div class="table-container"> <table class="guide-table">
+        <tr style="background:#f8f9fa;"><th>Ünvan (Kısaltma)</th><th>Kullanım Alanı</th></tr>
+        <tr><td><b>Dottore (Dott.) / Dottoressa (Dott.ssa)</b></td><td>Üniversite mezunu herkes için kullanılan temel ünvandır.</td></tr>
+        <tr><td><b>Professore (Prof.) / Professoressa (Prof.ssa)</b></td><td>Akademisyenler veya öğretmenler için kullanılır.</td></tr>
+        <tr><td><b>Avvocato (Avv.)</b></td><td>Avukatlar için kullanılan mesleki bir ünvandır.</td></tr>
+        <tr><td><b>Ingegnere (Ing.)</b></td><td>Mühendisler için kullanılan mesleki bir ünvandır.</td></tr>
+        <tr><td><b>Architetto (Arch.)</b></td><td>Mimarlar için kullanılan mesleki bir ünvandır.</td></tr>
+    </table> </div>
+</div>
+
+        <div class="guide-box" style="border-left:5px solid var(--f);">
+            <h4>📧 Regole di scrittura dell'e-mail-solo digitale (E-posta Yazım Kuralları-sadece dijital)</h4>
+                     <i><h4>anche...📧 Netiquette dell'e-mail-Regole di buona educazione (E-posta Netiquette-Görgü Kuralları)</h4></i>
+            <ul>
+                <li><b>Oggetto:</b> E-postanın konusu mutlaka kısa ve öz yazılmalıdır, asla boş bırakılmamalıdır. E-postanın "kimlik kartı" gibidir. (Es: Richiesta di informazioni).</li>
+                <li><b>Livello di formalità:</b> Tanımadığınız birine hitap ederken ve resmi yazışmalarda <b>"Lei"</b> (Siz) formu kullanılır ve genellikle büyük harfle başlar<i><b> (Dare del Lei...Suo, Le, La)</b><i>.</li>
+                <li><b>Allegati:</b> Bir dosya eklediğinizde "In allegato..." kalıbını mutlaka kullanın.</li>
+            </ul>
+        </div>
+        <div class="guide-box" style="border-left:5px solid var(--it-green); margin-top:20px;">
+    <h4 style="color:var(--it-green);">🖇️ Come gestire gli Allegati (Ek Dosyalar)</h4>
+    <p>İtalyanca resmi yazışmalarda dosya eklerini belirtirken kullanılan profesyonel kalıplar ve kelime farkları:</p>
+    
+    <div class="table-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="guide-table" style="min-width: 600px;">
+            <tr style="background:#f0f9f0;">
+                <th>İngilizce</th>
+                <th>İtalyanca (Resmi)</th>
+                <th>Kullanım Notu</th>
+            </tr>
+            <tr>
+                <td>Please find attached...</td>
+                <td><b>In allegato Le/Vi invio...</b></td>
+                <td>En yaygın ve güvenli kalıptır.</td>
+            </tr>
+            <tr>
+                <td>Attached is...</td>
+                <td><b>Si prega di trovare in allegato...</b></td>
+                <td>İngilizceye birebir en yakın, resmi form.</td>
+            </tr>
+            <tr>
+                <td>I am attaching...</td>
+                <td><b>Allego alla presente (mail)...</b></td>
+                <td>"Bu e-postaya ekliyorum" anlamında profesyoneldir.</td>
+            </tr>
+            <tr>
+                <td>As requested, attached...</td>
+                <td><b>Come richiesto, invio in allegato...</b></td>
+                <td>"İsteğiniz üzerine ekte gönderiyorum..."</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="background:#fdfdfd; padding:15px; margin-top:15px; border:1px solid #eee; border-radius:8px; font-size:0.95em;">
+        <strong>📄 Kelime Seçimi (Nüanslar):</strong><br>
+        • <b>Il documento:</b> Genel belge/evrak (Kimlik, kontrat vb.).<br>
+        • <b>La relazione:</b> Analiz ve yorum içeren detaylı "rapor" (Relazione finale).<br>
+        • <b>Il rapporto:</b> Teknik veya istatistiksel rapor (Rapporto vendite).<br>
+        • <b>La pratica:</b> Bir işleme ait tüm evraklar (Dossier/İşlem dosyası).<br><br>
+        
+        <strong>💡 Örnek Cümleler:</strong><br>
+        • <i>"In allegato Le invio il documento richiesto."</i> (İstediğiniz belgeyi ekte size gönderiyorum.)<br>
+        • <i>"Si prega di trovare in allegato la relazione finale."</i> (Ekli son raporu bulabilirsiniz.)
+    </div>
+</div>
+
+<div class="guide-box" style="border-left:5px solid var(--it-red); background:#fff9f9;">
+<!DOCTYPE html>
+   <h4>🚫 Nelle e-mail che richiedono un linguaggio formale <i>(Resmi bir dille yazılması gereken e-maillerde) </i></h4>
+    <p><b>Parole ed espressioni da evitare (Kaçınılması Gerekenler):</b></p>
+    <p>Resmi bir e-postayı profesyonel göstermek için aşağıdaki ifadelerden kaçınmalı ve yerine daha uygun olanları tercih etmelisiniz:</p>
+    <table class="guide-table">
+        <tr style="background:#fff5f5;">
+            <th>❌ Kaçının (Evitare)</th>
+            <th>✅ Tercih Edin (Preferire)</th>
+            <th>Nota</th>
+        </tr>
+        <tr>
+            <td><b>Ciao / Ehilà</b></td>
+            <td><b>Gentile / Egregio</b></td>
+            <td>Resmi yazışmalar için giriş hitaplarıdır.</td>
+        </tr>
+        <tr>
+            <td><b>grz / pfv / cmq</b></td>
+            <td><b>Grazie / Per favore / Comunque</b></td>
+            <td>Resmi yazışmalarda asla dijital kısaltma kullanmayın.</td>
+        </tr>
+        <tr>
+            <td><b>Voglio...</b></td>
+            <td><b>Vorrei / Gradirei...</b></td>
+            <td>"Voglio" (İstiyorum) çok agresiftir; nezaket için <b><i>Condizionale</b></i> (şart kipi) tercih edilmelidir.</td>
+        </tr>
+        <tr>
+            <td><b>Fammi sapere</b></td>
+            <td><b>Resto in attesa di un Suo riscontro</b></td>
+            <td>"Haber ver" yerine resmi "Yanıtınızı bekliyorum" kalıbıdır.</td>
+        </tr>
+    </table>
+</div>
+
+        <div class="guide-box" style="border-left:5px solid var(--it-green);">
+            <h4>📱 Messaggistica Digitale-SMS & WhatsApp (Dijital Mesajlaşma)</h4>
+            <p>Resmiyetin en düşük olduğu alandır. Kısaltmalar (cmq, grz, xké) hız kazandırır ancak resmi makamlara yazarken asla kullanılmaz.</p>
+        </div>
+
+        <div class="guide-box" style="border-left:5px solid var(--it-green);">
+            <h4>📐 Accordo grammaticale e formule di saluto (Gramer ve Hitap Uyumu)</h4>
+            <p>Hitap ve kapanışın resmiyet seviyesi mutlaka aynı olmalıdır (Controllo di Coerenza):</p>
+            <ul>
+                <li><b>Caro/a:</b> Samimi (Arkadaş/Aile) -> Kapanış: <i>Un abbraccio</i>.</li>
+                <li><b>Egregio/Gentile:</b> Resmi (İş/Hoca) -> Kapanış: <i>Distinti saluti</i>.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    var cf = null;
+    function curF(el) { cf = el; }
+
+    function insC(c) {
+        if (!cf) return;
+        var s = cf.selectionStart;
+        cf.value = cf.value.substring(0, s) + c + cf.value.substring(cf.selectionEnd);
+        cf.focus(); cf.selectionStart = cf.selectionEnd = s + 1;
+    }
+
+    function p(t) { var b = document.getElementById('ebody'); b.value += t + " "; b.focus(); }
+    function pwa(t) { var i = document.getElementById('wa-in'); i.value += " " + t + " "; i.focus(); }
+
+    function tabNav(evt, tabName) {
+        var i, content, btns;
+        content = document.getElementsByClassName("content");
+        for (i = 0; i < content.length; i++) { content[i].style.display = "none"; }
+        btns = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btns.length; i++) { btns[i].classList.remove("active"); }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.classList.add("active");
+    }
+
+   function genE() {
+        var pre = document.getElementById('p-box');
+        var warn = document.getElementById('w-box');
+        var si = document.getElementById('esal');
+        var sf = document.getElementById('esal-fin');
+        
+        // Yeni eklediğimiz isim kutusundaki veriyi alıyoruz
+        var salName = document.getElementById('esal-name').value;
+        // Hitap ve ismi birleştiriyoruz (Eğer isim yazılmadıysa sadece hitabı alır)
+        var finalGreeting = si.value + (salName ? " " + salName : "");
+        
+        var t1 = si.options[si.selectedIndex].getAttribute('data-type');
+        var t2 = sf.options[sf.selectedIndex].getAttribute('data-type');
+
+        warn.style.display = (t1 !== t2) ? "block" : "none";
+        
+        pre.style.display = "block";
+        
+        // Burada si.value yerine artık finalGreeting kullanıyoruz
+        pre.innerHTML = "<b>Mittente:</b> " + document.getElementById('efrom').value + 
+                        "\n<b>Destinatario:</b> " + document.getElementById('eto').value + 
+                        "\n<b>Oggetto:</b> " + document.getElementById('eobj').value + 
+                        "\n\n" + finalGreeting + ",\n\n" + 
+                        document.getElementById('ebody').value + "\n\n" + 
+                        sf.value + ",\n" + 
+                        document.getElementById('efrom').value;
+                        
+        pre.scrollIntoView({behavior: "smooth"});
+    }
+    var ultimaRisposta = ""; // Botun son söylediğini burada tutacağız
+    function sw() {
+    var i = document.getElementById('wa-in');
+    var inputVal = i.value.trim().toLowerCase(); // Küçük harfe çevirip temizliyoruz
+    if(!inputVal) return;
+    
+    var d = document.getElementById('wa-dis');
+    
+    // Kullanıcının mesajını ekrana bas
+    d.innerHTML += '<div class="bubble mine">' + i.value + '</div>';
+    i.value = "";
+    d.scrollTop = d.scrollHeight;
+
+    var risposta = "";
+
+    // --- AKILLI MANTIK (Anahtar Kelimeler) ---
+    if (inputVal.includes("ciao") || inputVal.includes("buongiorno")) {
+        risposta = "Ciao! Che bello sentirti! Come va la vita? 😊";
+    } 
+    else if (inputVal.includes("come stai") || inputVal.includes("tutto bene")) {
+        risposta = "Tutto bene, grazie! Sto mangiando un panino al salame... vuoi un morso? 🥪😋";
+    }
+    else if (inputVal.includes("ora") || inputVal.includes("ore") || inputVal.includes("tempo")) {
+        risposta = "È quasi ora di cena! La mia pancia brontola come un vulcano! 🌋🍝";
+    }
+    else if (inputVal.includes("grazie") || inputVal.includes("grz")) {
+        risposta = "Prego! Figurati! Per te farei di tutto (tranne rinunciare alla pizza). 🍕😇";
+    }
+    else if (inputVal.includes("chi sei") || inputVal.includes("nome")) {
+        risposta = "Sono Giggetto, il tuo assistente italiano super pigro! 🦥";
+    }
+    else {
+        // --- TÜM KOMİK VE RASTGELE CEVAPLARIN BİRLEŞİMİ ---
+        var randomRisposte = [
+            // Ulaşım & Zaman
+            "Scusa, sono in ritardo come un treno regionale! Arrivo tra 2 ore... forse. 🚄🐢",
+            "Il mio motorino è stanco e ha deciso di andare a piedi oggi. 🛵👟",
+            "Cosa?! È già mezzogiorno? La mia pasta mi sta chiamando! 🕛🍝",
+            "Vengo con l'autobus, ma l'autista ha deciso di fare il giro panoramico... 🚌🇮🇹",
+            // Sebzeler & Mutfak
+            "Non posso parlare ora, sto avendo una discussione seria con un carciofo. 🥦🧐",
+            "Oggi mi sento come un pomodoro in un'insalata: schiacciato ma felice! 🍅🥗",
+            "Zucchine o melanzane? Questo è il dilemma... aiutami tu! 🍆🤔",
+            "Ho provato a cucinare i broccoli, ma ora la mia cucina sembra una foresta incantata. 🥦✨",
+            // Günlük Yaşam & Saatler
+            "Ma sono le tre di notte! Persino i cornetti stanno ancora dormendo! 🥐😴",
+            "Aspetta, mancano 10 minuti alle sette: è l'ora dell'aperitivo! 🍹🇮🇹",
+            "Il mio orologio va all'indietro... oggi per me è ancora ieri! 🕒🔙",
+            // Komik Diğerleri
+            "Mamma mia! Ho dimenticato le chiavi dentro la scatola della pizza! 🍕🔑",
+            "Bravissimo! Ti meriti un monumento fatto di parmigiano! 🧀🏛️",
+            "Mamma mia! Che bella notizia! 🍕",
+            "Aspetta, devo prima finire il mio espresso... ☕",
+            "Bravissimo! Ti meriti un tiramisù gigante! 🍰",
+            "Scusa, il mio gatto ha camminato sulla tastiera... 🐈‍⬛",
+            "Certo! Ma solo se porti tu la pizza! 🍕",
+            "D'accordo, ma non dirlo alla nonna! 🤫",
+            "Il mio Wi-Fi è più lento di una lumaca stanca... 🐌",
+            "Perfetto! Sto già preparando la pasta! 🍝",
+            "Santo cielo! Hai proprio ragione! 🙌",
+            "Ok, ma prima fammi fare un riposino... 😴",
+            "Geniale! Nemmeno Leonardo da Vinci ci avrebbe pensato! 🎨"
+        ];
+       // Bir öncekiyle aynı olmayan bir cevap seçene kadar döner
+        var nuovaRisposta = "";
+        do {
+            nuovaRisposta = randomRisposte[Math.floor(Math.random() * randomRisposte.length)];
+        } while (nuovaRisposta === ultimaRisposta); 
+        
+        risposta = nuovaRisposta;
+        ultimaRisposta = risposta; // Bu cevabı hafızaya kaydet
+    }
+
+    // 1 saniye gecikmeli yanıt
+    setTimeout(function(){
+        d.innerHTML += '<div class="bubble theirs">' + risposta + '</div>';
+        d.scrollTop = d.scrollHeight;
+    }, 1000);
+}
+function parolaGiorno_B1_C1 () {
+    var parole = [
+"L'equivoco (gli equivoci): Yanlış anlaşılma 🤨", "La sfumatura (le sfumature): Nüans 🎨", "Il rammarico (i rammarichi): Pişmanlık 😔",
+        "La consapevolezza (le consapevolezze): Farkındalık 🧠", "L'ostacolo (gli ostacoli): Engel 🚧", "La sfida (le sfide): Meydan okuma 🏔️",
+        "Il patrimonio (i patrimoni): Miras 🏛️", "Il provvedimento (i provvedimenti): Önlem 🛡️", "L'esigenza (le esigenze): Gereksinim 💡",
+        "Il traguardo (i traguardi): Hedef 🏁", "L'atteggiamento (gli atteggiamenti): Tavır 🙍‍♂️", "La polemica (le polemiche): Tartışma 🗣️",
+        "Il benessere (i benesseri): Refah ✨", "L'ambiente (gli ambienti): Çevre 🌍", "Il paradosso (i paradossi): Çelişki 🔄",
+        "Lo sviluppo (gli sviluppi): Gelişim 🌱", "L'approccio (gli approcci): Yaklaşım 🤝", "Il legame (i legami): Bağ 🔗",
+        "La competenza (le competenze): Yetkinlik 🎓", "Il quotidiano (i quotidiani): Günlük yaşam 📰", "Il brivido (i brividi): Ürperti 🥶",
+        "Lo stupore (gli stupori): Şaşkınlık 😲", "L'incanto (gli incanti): Büyü ✨", "La nostalgia (le nostalgie): Özlem 🕰️",
+        "Il coraggio (i coraggi): Cesaret 💪", "La saggezza (le saggezze): Bilgelik 🦉", "L'ingegno (gli ingegni): Deha 💡",
+        "La fatica (le fatiche): Emek 😫", "La speranza (le speranze): Umut 🌟", "Il destino (i destini): Kader 🎡",
+        "L'incubo (gli incubi): Kabus 🌑", "Il sogno (i sogni): Rüya 💭", "La realtà (le realtà): Gerçeklik 🌍",
+        "La fortuna (le fortune): Şans 🍀", "L'eredità (le eredità): Miras 💰", "Il pregiudizio (i pregiudizi): Önyargı 🚫",
+        "La vicenda (le vicende): Hadise 📖", "L'incentivo (gli incentiv): Teşvik 🚀", "La testimonianza (le testimonianze): Tanıklık 📜",
+        "L'indagine (le indagini): Araştırma 🔍", "Il verdetto (i verdetti): Hüküm ⚖️", "La sentenza (le sentenze): Yargı 👩‍⚖️",
+        "Il reato (i reati): Suç 👮", "Lo spreco (gli sprechi): İsraf 🗑️", "L'esito (gli esiti): Sonuç 🏁",
+        "L'ipotesi (le ipotesi): Varsayım 🧪", "La tesi (le tesi): Tez 📚", "L'analisi (le analisi): Analiz 📊",
+        "Sintesi (le sintesi): Sentez 🧬", "Il metodo (i metodi): Yöntem 📐", "Lo scopo (gli scopi): Amaç 🎯",
+        "Il valore (i valori): Değer 💎", "La norma (le norme): Kural ⚖️", "Il cittadino (i cittadini): Vatandaş 👥",
+        "Il compromesso (i compromessi): Uzlaşma 🤝", "La gestione (le gestioni): Yönetim 💼", "L'obbligo (gli obblighi): Zorunluluk 📝",
+        "Il diritto (i diritti): Hak ⚖️", "Il dovere (i doveri): Ödev 📋", "La giustizia (le giustizie): Adalet 🏛️",
+        "Il sospetto (i sospetti): Şüphe 🧐", "La certezza (le certezze): Kesinlik ✅", "Il dubbio (i dubbi): Kuşku ❓",
+        "L'ecosistema (gli ecosistemi): Ekosistem 🌱", "L'inquinamento (gli inquinamenti): Kirlilik 🏭", "La siccità (le siccità): Kuraklık 🏜️",
+        "L'energia (le energie): Enerji ⚡", "La scoperta (le scoperte): Keşif 🔬", "L'esperimento (gli esperimenti): Deney 🧪",
+        "La ricerca (le ricerche): Araştırma 📚", "La prova (le prove): Kanıt 📝", "Il fenomeno (i fenomeni): Olgu 🌪️",
+        "La catastrofe (le catastrofi): Felaket 🌋", "Il terremoto (i terremoti): Deprem 🏚️", "L'alluvione (le alluvioni): Sel 🌊",
+        "Il clima (i climi): İklim 🌦️", "Il ghiacciaio (i ghiacciai): Buzul 🏔️", "L'atmosfera (le atmosfere): Atmosfer ☁️",
+        "Il capolavoro (i capolavori): Başyapıt 🎨", "La mostra (le mostre): Sergi 🖼️", "Il palcoscenico (i palcoscenici): Sahne 🎭",
+        "L'opera (le opere): Eser 🎼", "La scultura (le sculture): Heykel 🗿", "L'affresco (gli affreschi): Fresk 🏰",
+        "Il romanzo (i romanzi): Roman 📖", "Il saggio (i saggi): Makale ✍️", "La poesia (le poesie): Şiir 📜",
+        "Il verso (i versi): Mısra 🖋️", "La rima (le rime): Kafiye 🎶", "Lo spartito (gli spartiti): Nota kağıdı 🎵",
+        "L'antidoto (gli antidoti): Panzehir 🧪", "Il dilemma (i dilemmi): İkilem 🤔", "L'entusiasmo (gli entusiasmi): Coşku ✨",
+        "La delusione (le delusioni): Hayal kırıklığı 😞", "L'orgoglio (gli orgogli): Gurur 🦁", "La modestia (le modestie): Alçakgönüllülük 🌱",
+        "L'arroganza (le arroganze): Kibir 🤨", "La pazienza (le pazienze): Sabır ⏳", "La fretta (le frette): Acele 🏃",
+        "L'inganno (gli inganni): Aldatma 🐍", "La lealtà (le lealtà): Sadakat 🐕", "Il tradimento (i tradimenti): İhanet 🗡️",
+        "La vendetta (le vendette): İntikam 🔥", "Il perdono (i perdoni): Affetme 🕊️", "La stupidità (le stupidità): Aptallık 🤡",
+        "Il genio (i geni): Deha 🧞", "La follia (le follie): Çılgınlık 🌀", "La viltà (le viltà): Korkaklık 🐁",
+        "La ricchezza (le ricchezze): Zenginlik 💰", "La povertà (le povertà): Fakirlik 📉", "La fame (le fami): Açlık 🍽️",
+        "La sete (le seti): Susuzluk 💧", "La malattia (le malattie): Hastalık 🤒", "La cura (le cure): Tedavi 💊",
+        "Il dolore (i dolori): Acı 😢", "La gioia (le gioie): Sevinç 😄", "La sorpresa (le sorprese): Sürpriz 🎁",
+        "L'odio (gli odi): Nefret 🖤", "La paura (le paure): Korku 😨", "L'ansia (le ansie): Kaygı 😰",
+        "La fiducia (le fiducie): Güven 🤝", "La libertà (le libertà): Özgürlük 🕊️", "La prigionia (le prigioni): Tutsaklık ⛓️",
+        "La pace (le paci): Barış 🏳️", "La guerra (le guerre): Savaş 🔫", "L'accordo (gli accordi): Anlaşma 🤝",
+        "Il conflitto (i conflitti): Çatışma 💥", "Il progresso (i progressi): İlerleme 📈", "Il declino (i declini): Gerileme 📉",
+        "L'origine (le origini): Köken 🌱", "La fine (le fini): Son 🏁", "L'eterno (gli eterni): Sonsuz ♾️",
+        "L'istante (gli istanti): An ⏱️", "Il passato (i passati): Geçmiş 🕰️", "Il presente (i presenti): Şimdiki zaman 📍",
+        "Il futuro (i futuri): Gelecek ⏭️", "L'inizio (gli inizi): Başlangıç 🎬", "La conclusione (le conclusioni): Sonuç 🏁",
+        "L'apparenza (le apparenze): Görünüş 🎭", "La sostanza (le sostanze): Cevher 💎", "L'essenza (le essenze): Öz ✨",
+        "Il parere (i pareri): Görüş 🗣️", "Il consiglio (i consigli): Tavsiye 💡", "La scelta (le scelte): Seçim 🗳️",
+        "L'occasione (le occasioni): Fırsat 🌟", "Il rischio (i rischi): Risk 🎲", "Il pericolo (i pericoli): Tehlike ⚠️",
+        "La salvezza (le salvezze): Kurtuluş ⛵", "Il caso (i casi): Tesadüf 🎲", "Lo sfortuna (le sfortune): Şanssızlık 📉",
+        "Il successo (i successi): Başarı 🏆", "Il fallimento (i fallimenti): Başarısızlık ❌", "Il potere (i poteri): Güç 👑",
+        "La debolezza (le debolezze): Zayıflık 🍃", "L'autorità (le autorità): Otorite 👮", "La ribellione (le ribellioni): İsyan 🔥",
+        "La legge (le leggi): Kanun ⚖️", "L'ingiustizia (le ingiustizie): Adaletsizlik ⛓️", "La corruzione (le corruzioni): Yolsuzluk 💸",
+        "La trasparenza (le trasparenze): Şeffaflık 🧊", "L'onestà (le onestà): Dürüstlük ✨", "L'ipocrisia (le ipocrisie): İkiyüzlülük 🎭",
+        "Il segreto (i segreti): Sır 🤫", "La verità (le verità): Gerçek ✔️", "La bugia (le bugie): Yalan 🤥",
+        "La promessa (le promesse): Söz 🤝", "L'impegno (gli impegni): Sorumluluk 📅", "Il compito (i compiti): Görev 📝",
+        "L'obbiettivo (gli obbiettivi): Hedef 🎯", "La meta (le mete): Varış noktası 🏁", "L'itinerario (gli itinerari): Güzergah 🗺️",
+        "La guida (le guide): Rehber 🗺️", "Il confine (i confini): Sınır 🚧", "L'orizzonte (gli orizzonti): Ufuk 🌅",
+        "L'infinito (gli infiniti): Sonsuzluk 🌌", "L'universo (gli universi): Evren 🌌", "Il pianeta (i pianeti): Gezegen 🪐",
+        "La stella (le stelle): Yıldız ⭐", "La galassia (le galassie): Galaksi 🌀", "Lo spazio (gli spazi): Uzay 🚀",
+        "Il vuoto (i vuoti): Boşluk 🕳️", "La materia (le materie): Madde ⚛️", "La forza (le forze): Kuvvet 💪",
+        "Il movimento (i movimenti): Hareket 🏃", "La stasi (le stasi): Durgunluk 🛑", "Il cambiamento (i cambiamenti): Değişim 🔄",
+        "L'evoluzion (le evoluzioni): Evrim 🧬", "La tradizione (le tradizioni): Gelenek 🏺", "La cultura (le culture): Kültür 🎭",
+        "L'identità (le identità): Kimlik 🆔", "La diversità (le diversità): Çeşitlilik 🌈", "L'unità (le unità): Birlik 🤝",
+        "La solidarietà (le solidarietà): Dayanışma 🤝", "L'altruismo (gli altruismi): Özgecilik 🤲", "L'egoismo (gli egoismi): Bencillik 👤",
+        "L'ambizione (le ambizioni): Hırs 🚀", "L'invidia (le invidie): Kıskançlık 🐍", "La gelosia (le gelosie): Gıpta 🤨",
+        "La rabbia (le rabbie): Öfke 😡", "La calma (le calme): Sakinlik 🧘", "La serenità (le serenità): Huzur ✨",
+        "L'equilibrio (gli equilibri): Denge ⚖️", "Il caos (i caosi): Kaos 🌪️", "L'ordine (gli ordini): Düzen 📋",
+        "La logica (le logiche): Mantık 🧠", "L'emozione (le emozioni): Duygu ❤️", "Il sentimento (i sentimenti): His ❤️",
+        "L'intuizione (le intuizioni): Sezgi 🔮", "La ragione (le ragioni): Akıl 🧠", "La fede (le fedi): İnanç 🙏",
+        "La religione (le religioni): Din ⛪", "La filosofia (le filosofie): Felsefe 🤔", "La scienza (le scienze): Bilim 🔬",
+        "L'arte (le arti): Sanat 🎨", "La letteratura (le letterature): Edebiyat 📚", "La musica (le musiche): Müzik 🎵",
+        "Il cinema (i cinema): Sinema 🎬", "Il teatro (i teatri): Tiyatro 🎭", "La pittura (le pitture): Resim 🖌️",
+        "L'architettura (le architetture): Mimari 🏛️", "La danza (le danze): Dans 💃", "Lo sport (gli sport): Spor ⚽",
+        "Il gioco (i giochi): Oyun 🎲", "La vittoria (le vittorie): Zafer 🏆", "La sconfitta (le sconfitte): Yenilgi ❌",
+        "Il premio (i premi): Ödül 🏅", "L'applauso (gli applausi): Alkış 👏", "Il fischio (i fischi): Islık 😙",
+        "Il silenzio (i silenzi): Sessizlik 🤫", "Il rumore (i rumori): Gürültü 📢", "La voce (le voci): Ses 🗣️",
+        "Il canto (i canti): Şarkı 🎤", "Il grido (le grida): Çığlık 😱", "Il sussurro (i sussurri): Fısıltı 🤫",
+        "La parola (le parole): Kelime 🗣️", "Il discorso (i discorsi): Nutuk 🗣️", "L'alfabeto (gli alfabeti): Alfabe 🔤",
+        "La scrittura (le scritture): Yazı ✍️", "La lettura (le letture): Okuma 📖", "L'ascolto (gli ascolti): Dinleme 👂",
+        "Il dialogo (i dialoghi): Diyalog 🤝", "Il monologo (i monologhi): Monolog 👤", "La conversazione (le conversazioni): Sohbet 🗣️",
+        "La discussione (le discussioni): Tartışma 🗣️", "L'argomento (gli argomenti): Konu 📝", "L'evidenza (le evidenze): Delil 🕵️",
+        "Il fatto (i fatti): Olgu ✅", "L'evento (gli eventi): Olay 🎆", "La situazione (le situazioni): Durum 📍",
+        "Il contesto (i contesti): Bağlam 📖", "La causa (le cause): Neden 🔍", "L'effetto (gli effetti): Etki ✨",
+        "La conseguenza (le conseguenze): Sonuç 🏁", "L'azione (le azioni): Eylem 🎬", "La reazione (le reazioni): Tepki 💥",
+        "Lo stimolo (gli stimoli): Uyarıcı ⚡", "La risposta (le risposte): Cevap 💬", "Il feedback (i feedback): Geri bildirim 🔄",
+        "L'errore (gli errori): Hata ❌", "Il rimedio (i rimedi): Çare 💊", "La soluzione (le soluzioni): Çözüm ✅",
+        "Il problema (i problemi): Sorun ❓", "La domanda (le domande): Soru ❓", "La curiosità (le curiosità): Merak 🤔",
+        "L'interesse (gli interessi): İlgi ✨", "La noia (le noie): Sıkıntı 😴", "Lo stress (gli stress): Stres 😰",
+        "Il relax (i relax): Gevşeme 🧖", "Il comfort (i comfort): Konfor 🛋️", "L'eleganza (le eleganze): Şıklık ✨",
+        "La bellezza (le bellezze): Güzellik ✨", "Lo stile (gli stili): Stil 👗", "La moda (le mode): Moda 👗",
+        "Il gusto (i gusti): Beğeni 👅", "Il sapore (i sapori): Tat 👅", "L'odore (gli odori): Koku 👃",
+        "Il profumo (i profumi): Parfüm 🌸", "Il tatto (i tatti): Dokunma ✋", "La vista (le viste): Görme 👀",
+        "L'udito (gli uditi): İşitme 👂", "L'olfatto (gli olfatti): Koklama 👃", "I sensi (i sensi): Duyular 🧠",
+        "La percezione (le percezioni): Algı 🧠", "L'immaginazione (le immaginazioni): Hayal gücü 💭", "La creatività (le creatività): Yaratıcılık 🎨",
+        "L'ispirazione (le ispirazioni): İlham ✨", "La memoria (le memorie): Hafıza 🧠", "L'attenzione (le attenzioni): Dikkat 🧐",
+        "La concentrazione (le concentrazioni): Odaklanma 🧘", "L'apprendimento (gli apprendimenti): Öğrenme 🎓", "L'insegnamento (gli insegnamenti): Öğretme 🏫",
+        "L'educazione (le educazioni): Eğitim 🎓", "La conoscenza (le conoscenze): Bilgi 📚", "L'intelligenza (le intelligenze): Zeka 🧠",
+        "Il senso (i sensi): Anlam 📍", "Lo spirito (gli spiriti): Ruh ✨", "L'anima (le anime): Can ✨",
+        "Il corpo (i corpi): Beden 🚶", "La mente (le menti): Zihin 🧠", "L'individuo (gli individui): Birey 👤",
+        "La persona (le persone): Kişi 👤", "La società (le società): Toplum 🏘️", "L'umanità (le umanità): İnsanlık 🌍",
+        "La natura (le nature): Doğa 🌱", "Il mondo (i mondi): Dünya 🌍"
+    ];
+
+    // Tarih bazlı seçim mantığı (Takvim günü)
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var diff = now - start;
+    var oneDay = 1000 * 60 * 60 * 24;
+    var dayOfYear = Math.floor(diff / oneDay);
+
+    var p = parole[dayOfYear % parole.length];
+    
+    var d = document.getElementById('wa-dis');
+    d.innerHTML += '<div class="bubble theirs"><b>📅 Parola del Giorno (B1-C1):</b><br>' + p + '</div>';
+    d.scrollTop = d.scrollHeight;
+}
+function parolaGiorno_A1_B1() {
+    var parole = [
+        // 1-50: Okul, Ev ve Eşyalar
+        "L'aula (le aule): Derslik 🏫", "Il banco (i banchi): Sıra 🪑", "La matita (le matite): Kurşun kalem ✏️", "Lo zaino (gli zaini): Sırt çantası 🎒", "L'astuccio (gli astucci): Kalemlik ✒️", "La gomma (le gomme): Silgi 🧼", "Il quaderno (i quaderni): Defter 📒", "Lo scaffale (gli scaffali): Raf 📚", "La scrivania (le scrivanie): Çalışma masası ✍️", "L'appartamento (gli appartamenti): Daire 🏢",
+        "Il corridoio (i corridoi): Koridor 🚪", "Il cassetto (i cassetti): Çekmece 🗄️", "Lo specchio (gli specchi): Ayna 🪞", "Il tappeto (i tappeti): Halı 🧶", "L'armadio (gli armadi): Gardırop 👗", "La sveglia (le sveglie): Çalar saat ⏰", "Il lenzuolo (le lenzuola): Çarşaf 🛏️", "Il cuscino (i cuscini): Yastık 🛌", "La spugna (le spugne): Sünger 🧽", "L'asciugamano (gli asciugamani): Havlu 🛁",
+        "La saponetta (le saponette): El sabunu 🫧", "Il pettine (i pettini): Tarak 🪮", "Lo spazzolino (gli spazzolini): Diş fırçası 🦷", "La padella (le padelle): Tava 🍳", "Il cucchiaio (i cucchiai): Kaşık 🥄", "La forchetta (le forchette): Çatal 🍴", "Il coltello (i coltelli): Bıçak 🔪", "Il piatto (i piatti): Tabak 🍽️", "Il bicchiere (i bicchieri): Bardak 🍷", "La tovaglia (le tovaglie): Masa örtüsü 🍽️",
+        "Lo strofinaccio (gli strofinacci): Kurulama bezi 🧼", "La sedia (le sedie): Sandalye 🪑", "Il tavolo (i tavoli): Masa 🛋️", "La finestra (le finestre): Pencere 🪟", "La porta (le porte): Kapı 🚪", "Il balcone (i balconi): Balkon 🪴", "La scala (le scale): Merdiven 🪜", "Il tetto (i tetti): Çatı 🏠", "Il muro (i muri): Duvar 🧱", "Il pavimento (i pavimenti): Yer/Zemin 🪵",
+        "Il soffitto (i soffitti): Tavan 🏠", "Il garage (i garage): Garaj 🚗", "Il cancello (i cancelli): Bahçe kapısı ⛩️", "Il giardino (i giardini): Bahçe 🏡", "L'ombrello (gli ombrelli): Şemsiye ☂️", "La chiave (le chiavi): Anahtar 🔑", "Il portafoglio (i portafogli): Cüzdan 👛", "La borsa (le borse): Çanta 👜", "L'indirizzo (gli indirizzi): Adres 📍", "Il numero (i numeri): Numara 🔢",
+
+        // 51-100: Şehir ve Ulaşım
+        "Il marciapiede (i marciapiedi): Kaldırım 🚶", "L'incrocio (gli incroci): Kavşak 🚦", "Il semaforo (i semafori): Trafik lambası 🚥", "La fermata (le fermate): Durak 🚏", "La stazione (le stazioni): İstasyon 🚉", "Il binario (i binari): Peron 🛤️", "Il biglietto (i biglietti): Bilet 🎟️", "Lo scontrino (gli scontrini): Fiş 🧾", "La prenotazione (le prenotazioni): Rezervasyon 📅", "L'ascensore (gli ascensori): Asansör 🛗",
+        "Il negozio (i negozi): Mağaza 🛍️", "Il mercato (i mercati): Pazar 🛒", "Il supermercato (i supermercati): Süpermarket 🛒", "La bacheca (le bacheche): Duyuru panosu 📌", "L'ufficio (gli uffici): Ofis 💼", "L'ospedale (gli ospedali): Hastane 🏥", "La farmacia (le farmacie): Eczane ⚕️", "La chiesa (le chiese): Kilise ⛪", "Il ponte (i ponti): Köprü 🌉", "La piazza (le piazze): Meydan 🏙️",
+        "Il palazzo (i palazzi): Saray/Bina 🏰", "La strada (le strade): Yol 🛣️", "Il vicolo (i vicoli): Dar sokak 🏘️", "La periferia (le periferie): Varoş 🏢", "Il centro (i centri): Merkez 📍", "Il monumento (i monumenti): Anıt 🏛️", "Il museo (i musei): Müze 🖼️", "Il teatro (i teatri): Tiyatro 🎭", "Il cinema (i cinema): Sinema 🎬", "La spiaggia (le spiagge): Plaj 🏖️",
+        "Il porto (i porti): Liman 🚢", "L'aeroporto (gli aeroporti): Havalimanı ✈️", "Il traghetto (i traghetti): Feribot ⛴️", "L'autobus (gli autobus): Otobüs 🚌", "Il treno (i treni): Tren 🚄", "La metropolitana (le metropolitane): Metro 🚇", "Il taxi (i taxi): Taksi 🚕", "La bicicletta (le biciclette): Bisiklet 🚲", "La macchina (le macchine): Araba 🚗", "Il motorino (i motorini): Scooter 🛵",
+        "Il traffico (i traffici): Trafik 🚗🚕", "Il viaggio (i viaggi): Yolculuk 🧳", "La vacanza (le vacanze): Tatil 🏖️", "La valigia (le valigie): Valiz 🧳", "Il passeggero (i passeggeri): Yolcu 👥", "L'autista (gli autisti): Şoför 👨‍✈️", "Il pilota (i piloti): Pilot 👨‍✈️", "La mappa (le mappe): Harita 🗺️", "La città (le città): Şehir 🏙️", "Il paese (i paesi): Ülke/Köy 🌍",
+
+        // 101-150: Yiyecek, İçecek ve Mutfak
+        "La colazione (le colazioni): Kahvaltı 🥐", "Il pranzo (i pranzi): Öğle yemeği 🍝", "La cena (le cene): Akşam yemeği 🍕", "La merenda (le merende): Atıştırmalık 🍎", "L'ingrediente (gli ingredienti): Malzeme 🍅", "La ricetta (le ricette): Yemek tarifi 📖", "Il pane (i pani): Ekmek 🥖", "Il burro (i burri): Tereyağı 🧈", "Lo zucchero (gli zuccheri): Şeker 🍬", "Il sale (i sali): Tuz 🧂",
+        "L'olio (gli oli): Yağ 🫗", "L'aceto (gli aceti): Sirke 🍶", "Il latte (i latte): Süt 🥛", "L'acqua (le acque): Su 💧", "Il succo (i succhi): Meyve suyu 🧃", "Il caffè (i caffè): Kahve ☕", "Il tè (i tè): Çay 🍵", "La birra (le birre): Bira 🍺", "Il vino (i vini): Şarap 🍷", "La bevanda (le bevande): İçecek 🥤",
+        "Il formaggio (i formaggi): Peynir 🧀", "L'uovo (le uova): Yumurta 🥚", "La carne (le carni): Et 🥩", "Il pesce (i pesci): Balık 🐟", "Il pollo (i polli): Tavuk 🍗", "La pasta (le paste): Makarna 🍝", "Il riso (i risi): Pirinç 🍚", "La minestra (le minestre): Çorba 🥣", "L'insalata (le insalate): Salata 🥗", "La mela (le mele): Elma 🍎",
+        "La banana (le banane): Muz 🍌", "L'arancia (le arance): Portakal 🍊", "La fragola (le fragole): Çilek 🍓", "Il limone (i limoni): Limon 🍋", "La pesca (le pesche): Şeftali 🍑", "L'uva (le uve): Üzüm 🍇", "La patata (le patate): Patates 🥔", "Il pomodoro (i pomodori): Domates 🍅", "La carota (le carote): Havuç 🥕", "La cipolla (le cipolle): Soğan 🧅",
+        "L'aglio (gli agli): Sarımsak 🧄", "La melanzana (le melanzane): Patlıcan 🍆", "Lo zucchino (gli zucchini): Kabak 🥒", "Il peperone (i peperoni): Biber 🫑", "Il fungo (i funghi): Mantar 🍄", "Il dolce (i dolci): Tatlı 🍰", "Il gelato (i gelati): Dondurma 🍦", "La torta (le torte): Kek 🎂", "Il biscotto (i biscotti): Bisküvi 🍪", "Il cioccolato (i cioccolati): Çikolata 🍫"
+        // Liste her gün sırayla dönecek şekilde ayarlanmıştır.
+    ];
+
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var diff = now - start;
+    var oneDay = 1000 * 60 * 60 * 24;
+    var dayOfYear = Math.floor(diff / oneDay);
+
+    var p = parole[dayOfYear % parole.length];
+    
+    var d = document.getElementById('wa-dis');
+    d.innerHTML += '<div class="bubble theirs"><b>📅 Parola del Giorno (Base A1-B1):</b><br>' + p + '</div>';
+    d.scrollTop = d.scrollHeight;
+}
+</script>
+</body>
+</html>
