@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Atelier Digitale di Scrittura</title>
+    <style>
+        :root { --it-green: #008C45; --it-red: #CD212A; --f: #2980b9; --n: #27ae60; --i: #f39c12; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        .container { max-width: 1000px; margin: auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 8px solid var(--it-green); }
+        
+        /* Sade ve Şık Başlık Tasarımı */
+        .main-header {
+            text-align: center;
+            background: white;
+            padding: 10px 10px;
+            margin: 0;
+            color: #333;
+            font-size: 1.2em;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Başlığın altındaki ince İtalyan şeridi */
+        .header-line {
+            height: 2px;
+            width: 100%;
+            display: flex;
+        }
+        .line-green { background: #008C45; flex: 1; }
+        .line-white { background: #fff; border-top: 1px solid #eee; border-bottom: 1px solid #eee; flex: 1; }
+        .line-red { background: #CD212A; flex: 1; }
+
+        /* Başlığın altındaki ince İtalyan şeridi */
+        .header-line {
+            height: 2px;
+            width: 100%;
+            display: flex;
+        }
+        .line-green { background: var(--it-green); flex: 1; }
+        .line-white { background: #eee; flex: 1; }
+        .line-red { background: var(--it-red); flex: 1; }
+
+       /* Klavye Karakterleri */
+        .kb { background: #333; padding: 10px; display: flex; justify-content: center; gap: 8px; position: sticky; top: 0; z-index: 1000; }
+        .key { padding: 8px 12px; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        /* Sekmeler */
+        .tabs { display: flex; background: #f8f9fa; border-bottom: 2px solid #ddd; }
+        .tab-btn { flex: 1; padding: 15px; border: none; cursor: pointer; font-weight: bold; background: #f8f9fa; transition: 0.3s; font-size: 1em; }
+        .tab-btn.active { background: white; color: var(--it-green); border-bottom: 4px solid var(--it-green); }
+        
+        .content { display: none; padding: 25px; animation: fadeIn 0.4s; }
+        .content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Form Elemanları */
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #444; }
+        select, input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; font-size: 1em; }
+        
+           /* MASAÜSTÜ GRİD VE GRUP AYARLARI */
+        .email-grid, .sal-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .email-grid div { flex: 1; }
+        #esal-name::placeholder { font-style: italic; color: #999; opacity: 0.7; }
+
+        /* Cümle Bankası */
+        .phrase-bank { background: #f1f8ff; padding: 15px; border-radius: 12px; border: 1px solid #cce5ff; margin-bottom: 15px; }
+        .cat-title { font-size: 0.85em; font-weight: bold; color: var(--it-red); margin: 10px 0 5px 0; text-transform: uppercase; border-bottom: 1px solid #ddd; }
+        .phrase-btn { background: #fff; border: 1px solid #ccc; padding: 6px 12px; margin: 4px; border-radius: 20px; cursor: pointer; font-size: 0.85em; }
+        .phrase-btn:hover { border-color: var(--it-green); background: #eef7f3; }
+
+        /* WhatsApp */
+        .wa-box { background: #e5ddd5 url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); border-radius: 15px; padding: 15px; height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; border: 1px solid #ccc; }
+        .bubble { max-width: 75%; padding: 10px; border-radius: 12px; font-size: 0.9em; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .bubble.mine { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 0; }
+        .bubble.theirs { align-self: flex-start; background: white; border-bottom-left-radius: 0; }
+
+        /* Uyarı ve Önizleme */
+        .warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba; display: none; margin-bottom: 15px; text-align: center; font-weight: bold; }
+        .btn-red { width: 100%; padding: 15px; background: var(--it-red); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1em; }
+        .preview { white-space: pre-wrap; background: #fff; border: 2px dashed #ccc; padding: 20px; margin-top: 15px; display: none; }
+        
+        /* Guida Table & Info */
+        .guide-box { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .guide-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .guide-table td, .guide-table th { border: 1px solid #eee; padding: 12px; font-size: 0.9em; }
+        .guide-table th { background: #f8f9fa; text-align: left; }
+        .nota-tr { color: #888; font-size: 0.8em; font-style: italic; }
+        /* MOBİL UYUMLULUK EKLEMESİ */
+        .table-container { 
+            width: 100%; 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; 
+            margin-bottom: 20px; 
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .email-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Mittente ve Destinatario yan yana */
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        /* Oggetto'nun (3. kutu) alt satıra geçip tüm genişliği kaplamasını sağlar */
+        .email-grid div:nth-child(3) {
+            grid-column: span 2;
+        }
+        
+        @media screen and (max-width: 600px) {
+            /* Yeni 20px Logo İçin Mobil Ayar */
+            .main-header {
+                font-size: 1.1em; /* Yazıyı mobilde biraz küçültüyoruz ki sığsın */
+                padding: 10px;
+                gap: 8px; /* Logo ve yazı arasındaki boşluğu daraltıyoruz */
+            }
+            .italy-small-logo {
+                width: 18px; /* Mobilde logoyu da bir tık küçültebiliriz */
+            }
+            body { padding: 5px; }
+            .container { border-radius: 0; box-shadow: none; width: 100%; }
+            .tab-btn { padding: 10px 5px; font-size: 0.8em; }
+            .content { padding: 15px; }
+            .kb { gap: 4px; padding: 5px; flex-wrap: wrap; }
+            .key { padding: 6px 10px; font-size: 0.9em; flex: 1 1 auto; text-align: center; }
+            .guide-table { font-size: 0.75em; }
+            .guide-table td, .guide-table th { padding: 6px 4px; }
+            .phrase-btn { font-size: 0.75em; padding: 5px 10px; }
+            input, select, textarea { font-size: 0.9em; }
+            .wa-box { height: 300px; }
+ /* Grid ve Selamlama Grubunu Mobilde Alt Alta Yapar */
+            .email-grid, .sal-group { 
+                flex-direction: column !important; 
+                display: flex !important; 
+                gap: 12px; 
+            }
+            .email-grid input, .sal-group input, .sal-group select { 
+                width: 100% !important; 
+                box-sizing: border-box; 
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-header">
+        🇮🇹 L'Atelier Digitale di Scrittura ✍️
+    </div>
+    
+    <div class="header-line">
+        <div class="line-green"></div>
+        <div class="line-white"></div>
+        <div class="line-red"></div>
+    </div>
+
+<div class="header-line">
+    <div class="line-green"></div>
+    <div class="line-white"></div>
+    <div class="line-red"></div>
+</div>
+    
+    <div class="header-line">
+        <div class="line-green" style="height:2px; background:#008C45; flex:1;"></div>
+        <div class="line-white" style="height:2px; background:#eee; flex:1;"></div>
+        <div class="line-red" style="height:2px; background:#CD212A; flex:1;"></div>
+    </div>
+    </div>
+    <div class="kb">
+        <button class="key" onclick="insC('à')">à</button><button class="key" onclick="insC('è')">è</button>
+        <button class="key" onclick="insC('é')">é</button><button class="key" onclick="insC('ì')">ì</button>
+        <button class="key" onclick="insC('ò')">ò</button><button class="key" onclick="insC('ù')">ù</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="tabNav(event, 'email-tab')">📧 Scrivi l'E-mail</button>
+        <button class="tab-btn" onclick="tabNav(event, 'wa-tab')">💬 WhatsApp</button>
+        <button class="tab-btn" onclick="tabNav(event, 'rules-tab')">📖 Guida delle Regole</button>
+    </div>
+
+    <div id="email-tab" class="content active">
+        <div class="email-grid">
+            <div><label>Mittente</label><input type="text" id="efrom" onfocus="curF(this)" placeholder="İsminiz"></div>
+            <div><label>Destinatario</label><input type="text" id="eto" onfocus="curF(this)" placeholder="Alıcı İsmi"></div>
+            <div><label>Oggetto (Konu)</label><input type="text" id="eobj" onfocus="curF(this)" placeholder="Konu..."></div>
+        </div>
+        
+       <label>Saluto Iniziale e Nome <span class="nota-tr">(Hitap + Alıcı İsmi)</span></label>
+        <div class="sal-group">
+            <select id="esal" style="flex: 1.5; margin-bottom: 0;">
+            <optgroup label="Formalità Estrema (FE)">
+                <option value="Sua Santità" data-type="formal">[FE] Sua Santità (Papa)</option>
+                <option value="Onorevole Presidente" data-type="formal">[FE] Onorevole Presidente (Cumhurbaşkanı)</option>
+                <option value="Pregiatissimo Onorevole" data-type="formal">[FE] Pregiatissimo Onorevole (Milletvekili)</option>
+                <option value="Pregiatissimo Signor Ambasciatore" data-type="formal">Signor Ambasciatore (Büyükelçi - Eril)</option>
+                <option value="Gentilissima Signora Ambasciatrice" data-type="formal">Signora Ambasciatrice (Büyükelçi - Dişil)</option>
+                <option value="Egregio Signor Console" data-type="formal">Signor Console (Konsolos - Eril)</option>
+                <option value="Egregia Signora Console" data-type="formal">Signora Console (Konsolos - Dişil)</option>
+            </optgroup>
+            <optgroup label="Formale (F)">
+                <option value="Gentile Signore" data-type="formal">Gentile Signore (Bay...)</option>
+                <option value="Gentile Signora" data-type="formal">Gentile Signora (Bayan...)</option>
+                <option value="Egregio Dottore" data-type="formal">Egregio Dottore (Eril Akademik)</option>
+                <option value="Egregia Dottoressa" data-type="formal">Egregia Dottoressa (Dişil Akademik)</option>
+                <option value="A chi di competenza" data-type="formal">A chi di competenza (İlgili Makama)</option>
+            </optgroup>
+            <optgroup label="Formale (Ünvanlar / Titoli)">
+                <option value="Gentile Dottore" data-type="formal">Gentile Dottore</option>
+                <option value="Gentile Dottoressa" data-type="formal">Gentile Dottoressa</option>
+                <option value="Gentile Professore" data-type="formal">Gentile Professore</option>
+                <option value="Gentile Professoressa" data-type="formal">Gentile Professoressa</option>
+                <option value="Gentile Avvocato" data-type="formal">Gentile Avvocato</option>
+                <option value="Gentile Ingegnere" data-type="formal">Gentile Ingegnere</option>
+                <option value="Gentile Architetto" data-type="formal">Gentile Architetto</option>
+            </optgroup>
+            <optgroup label="Informale (I)">
+                <option value="Caro" data-type="informal">Caro (Erkek - Eril)</option>
+                <option value="Cara" data-type="informal">Cara (Kadın - Dişil)</option>
+                <option value="Carissimo" data-type="informal">Carissimo (Erkek - Eril)</option>
+                <option value="Carissima" data-type="informal">Carissima (Kadın - Dişil)</option>   
+                <option value="Ciao" data-type="informal">Ciao</option>
+                <option value="Ehilà" data-type="informal">Ehilà</option>
+                <option value="Buongiorno" data-type="informal">Buongiorno</option>
+            </optgroup>
+        </select>
+        <input type="text" id="esal-name" onfocus="curF(this)" placeholder="Es: Rossi o Giulia..." style="flex: 1; margin-bottom: 0;">
+        </div>
+        <div class="phrase-bank">
+    <label>Banca delle Frasi <span class="nota-tr">(Cümle Bankası - Tıkla ve Ekle)</span></label>
+    
+    <div class="cat-title">Sociale & Informale (Sosyal ve Samimi)</div>
+    <button class="phrase-btn" onclick="p('Ti scrivo per chiederti un favore.')">Chiedere un favore (Bir iyilik istemek için yazıyorum)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Come va? Spero che tutto proceda per il meglio.')">Come va? (Nasıl gidiyor? Umarım her şey yolundadır)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Spero che tu stia bene e che passerai una bella settimana.')">Spero tu stia bene (Umarım iyisindir ve güzel bir hafta geçirirsin)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Volevo solo salutarti e sapere come stai.')">Salutare (Sadece merhaba demek ve nasıl olduğunu bilmek istedim)<b>[I]</b></button>
+    <button class="phrase-btn" onclick="p('Ci sentiamo presto per organizzare qualcosa di bello.')">Ci sentiamo presto (Yakında güzel bir şeyler ayarlamak için haberleşiriz)<b>[I]</b></button>
+
+    <div class="cat-title">Inizio & Richieste (Giriş ve Talepler)</div>
+    <button class="phrase-btn" onclick="p('Le scrivo per avere maggiori informazioni riguardo al corso.')">Richiesta info (Kurs hakkında daha fazla bilgi almak için yazıyorum)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('In allegato alla presente, Le invio il documento richiesto.')">In allegato (Bu yazıya ek olarak, istenen belgeyi sunuyorum)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('Volevo chiederLe se fosse possibile spostare il nostro incontro.')">Spostare incontro (Görüşmemizi ertelemenin mümkün olup olmadığını sormak istedim)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('La contatto per confermare la mia partecipazione all\'evento.')">Conferma (Etkinliğe katılımımı onaylamak için sizinle iletişime geçiyorum)<b>[F]</b></button>
+    
+    <div class="cat-title">Chiusura (Kapanış)</div>
+    <button class="phrase-btn" onclick="p('Resto in attesa di una Sua gentile risposta.')">In attesa di risposta (Nazik cevabınızı bekliyorum)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('Ci sentiamo presto per definire meglio tutti i dettagli.')">Definire dettagli (Tüm detayları netleştirmek için yakında haberleşiriz)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('La ringrazio ancora per la Sua cortese disponibilità.')">Ringraziamento (Nazik müsaitliğiniz için tekrar teşekkür ederim)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('Spero di risentirLa presto e Le auguro una buona giornata.')">Auguri finali (Yakında tekrar görüşmek dileğiyle, iyi günler dilerim)<b>[F]</b></button>
+
+    <div class="cat-title">Appuntamenti & Tecnica (Randevu ve Teknik)</div>
+    <button class="phrase-btn" onclick="p('Ricordate l\'appuntamento di domenica per la nostra gita, vero?')">Ricordate la gita? (Pazar günkü gezi randevusunu hatırlıyorsunuz, değil mi?)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('Vorrei fissare un appuntamento per discutere del nuovo progetto.')">Fissare appuntamento (Yeni projeyi tartışmak için bir randevu ayarlamak isterim)<b>[I/F]</b></button>
+    <button class="phrase-btn" onclick="p('Non riesco a scaricare il file; potrebbe inviarmelo di nuovo?')">Errore download (Dosyayı indiremiyorum; tekrar gönderebilir misiniz?)<b>[F]</b></button>
+    <button class="phrase-btn" onclick="p('Ho riscontrato un problema tecnico con il link che mi ha inviato.')">Problema link (Gönderdiğiniz bağlantıda teknik bir sorunla karşılaştım)<b>[F]</b></button>
+</div>
+        <textarea id="ebody" rows="5" onfocus="curF(this)" placeholder="Il tuo messaggio...(Mesajınız...)"></textarea>
+
+        <label>Saluto finale</label>
+        <select id="esal-fin">
+            <option value="Voglia gradire i miei più devoti ossequi" data-type="formal">[FE] Più devoti ossequi</option>
+            <option value="In attesa di un Suo riscontro, porgo distinti saluti" data-type="formal">[F] In attesa di riscontro, porgo distinti saluti</option>
+            <option value="Distinti saluti" data-type="formal">[F] Distinti saluti</option>
+            <option value="Cordiali saluti" data-type="formal">[N] Cordiali saluti</option>
+            <option value="Un caro saluto" data-type="informal">[I] Un caro saluto / A presto</option>
+            <option value="Un abbraccio" data-type="informal">[I] Un abbraccio</option>
+            <option value="A presto" data-type="informal">[I] A presto</option>
+            <option value="Tanti baci / tvb" data-type="informal">[I] Tanti baci / tvb</option>
+        </select>
+
+        <button class="btn-red" onclick="genE()">Genera Email & Controlla Coerenza</button>
+        
+        <div id="w-box" class="warning">⚠️ Attenzione! Il saluto iniziale e quello finale non sono coerenti. (Dikkat! Başlangıç ve bitiş hitapları birbiriyle uyumlu değil.)</div>
+        <div id="p-box" class="preview"></div>
+    </div>
+
+    <div id="wa-tab" class="content">
+        <div class="wa-box" id="wa-dis">
+            <div class="bubble theirs">Ciao! Tutto bene? Ci vediamo stasera?</div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <input type="text" id="wa-in" onfocus="curF(this)" placeholder="Messaggio...">
+            <button onclick="sw()" style="background:var(--it-green); color:white; border:none; border-radius:50%; width:45px; height:45px;">➤</button>
+        </div>
+        <div style="margin-top:10px;">
+            <label class="nota-tr">Scorciatoie SMS (Kısaltmalar):</label>
+            <button class="phrase-btn" onclick="pwa('cmq')">cmq (comunque)</button>
+            <button class="phrase-btn" onclick="pwa('grz')">grz (grazie)</button>
+            <button class="phrase-btn" onclick="pwa('xké')">xké (perché)</button>
+            <button class="phrase-btn" onclick="pwa('pfv')">pfv (per favore)</button>
+            <button class="phrase-btn" onclick="pwa('tat')">tat (ti amo tanto)</button>
+            <button class="phrase-btn" onclick="pwa('x')">x (per)</button>
+            <button class="phrase-btn" onclick="pwa('tvb')">tvb (ti voglio bene)</button>
+          <div style="margin-top:10px; display: flex; gap: 10px; flex-wrap: wrap;">
+    <button class="phrase-btn" style="background:#e6f9ff; border:1px solid #00aaff;" onclick="parolaGiorno_A1_B1()">💡 Parola del Giorno A1-B1 (Base)</button>
+    <button class="phrase-btn" style="background:#fff9e6; border:1px solid #ffd700;" onclick="parolaGiorno_B1_C1()">💡 Parola del Giorno B1-C1 (Avanzato)</button>
+</div>
+<div style="margin-top:8px;">
+    <small style="color: #666; font-style: italic; display: block;">
+    Nota: World Emoji Day è il 17 luglio 
+    <span style="font-style: normal; display: inline-block;">📅</span> 
+    perciò l'emoji non cambia, ma la parola sì!
+</small>
+</div>
+        </div>
+    </div>
+
+    <div id="rules-tab" class="content">
+        <h3 style="color:var(--it-red);">📖 Guida delle Regole (Digital Netiquette)</h3>
+        
+        <div class="guide-box" style="border-left:5px solid var(--it-red);">
+            <h4>🎯 "Gentile" Nasıl Kullanılır?</h4>
+            <p><i>Gentile</i> İtalyancada en yaygın, nötr
