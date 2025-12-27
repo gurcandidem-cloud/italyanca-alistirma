@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İtalyanca Geniş Kapsamlı Test (Tüm Sorular)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: #2c3e50; margin-bottom: 5px; }
+        .subtitle { color: #7f8c8d; margin-bottom: 20px; font-size: 0.9em; }
+        .progress { margin-bottom: 15px; color: #3498db; font-weight: bold; font-size: 1.1em; }
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            padding: 20px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            border-left: 6px solid #e74c3c;
+            text-align: left;
+        }
+        .options { display: grid; gap: 12px; grid-template-columns: 1fr; }
+        @media (min-width: 500px) {
+            .options { grid-template-columns: 1fr 1fr; }
+        }
+        button.option-btn {
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.2s;
+            color: #2c3e50;
+        }
+        button.option-btn:hover:not([disabled]) {
+            background-color: #eafaf1;
+            border-color: #2ecc71;
+            transform: translateY(-2px);
+        }
+        button.option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        button.option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .next-btn {
+            margin-top: 25px;
+            padding: 12px 30px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .next-btn:hover { background-color: #2980b9; }
+        
+        /* Sonuç Ekranı */
+        .result-screen { display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(#2ecc71 0%, #ecf0f1 0%);
+            margin: 30px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="quiz-screen">
+            <h1>İtalyanca Fiil Testi</h1>
+            <p class="subtitle">Tüm alıştırmalar (Esercizi 2a, 2b, 2c, 3, 4, 5)</p>
+            <div class="progress" id="progress">Soru 1 / 50</div>
+            
+            <div class="question" id="question-text">Yükleniyor...</div>
+            
+            <div class="options" id="options-container"></div>
+
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Sonraki Soru</button>
+        </div>
+
+        <div id="result-screen" class="result-screen">
+            <h1>Test Tamamlandı!</h1>
+            <div class="score-circle" id="final-score-circle">
+                <span id="final-score">0/0</span>
+            </div>
+            <h3 id="feedback-message"></h3>
+            <button class="next-btn" style="display:inline-block; background-color: #27ae60;" onclick="restartQuiz()">Testi Tekrar Başlat</button>
+        </div>
+    </div>
+
+    <script>
+        // TÜM SORULAR BURAYA EKLENDİ
+        const fullQuestionsDB = [
+            // --- Esercizio 2a ---
+            { q: "1. Quando (tu - vedere) ________ Marco?", correct: "vedi", distractors: ["vede", "vediamo", "vedo"] },
+            { q: "2. (Noi - incontrare) ________ i nostri amici in discoteca.", correct: "incontriamo", distractors: ["incontrate", "incontrano", "incontri"] },
+            { q: "3. (Io - prendere) ________ l'autobus ogni mattina alle 7.", correct: "prendo", distractors: ["prendi", "prende", "prendiamo"] },
+            { q: "4a. Domani (noi - cenare) ________ da Stefano.", correct: "ceniamo", distractors: ["cenate", "cenano", "ceni"] },
+            { q: "4b. Io (portare) ________ il vino.", correct: "porto", distractors: ["porti", "porta", "portiamo"] },
+            { q: "4c. Tu cosa (portare) ________?", correct: "porti", distractors: ["porta", "porto", "portate"] },
+            { q: "5. (Voi - parlare) ________ inglese?", correct: "parlate", distractors: ["parliamo", "parlano", "parli"] },
+            { q: "6a. (Io - telefonare) ________ a mia madre.", correct: "telefono", distractors: ["telefona", "telefoni", "telefonano"] },
+            { q: "6b. Poi (io - preparare) ________ la cena.", correct: "preparo", distractors: ["prepara", "prepari", "prepariamo"] },
+            { q: "7a. (Noi - sentire) ________ ancora questo CD.", correct: "sentiamo", distractors: ["sentite", "sento", "sentono"] },
+            { q: "7b. Poi (noi - decidere) ________ quale regalare a Elena.", correct: "decidiamo", distractors: ["decidete", "decide", "decido"] },
+            { q: "8. Dove (lavorare) ________ tuo fratello?", correct: "lavora", distractors: ["lavori", "lavorano", "lavoro"] },
+            { q: "9. Il tempo è brutto, (io - preferire) ________ restare a casa.", correct: "preferisco", distractors: ["preferisci", "preferisce", "preferiamo"] },
+            { q: "10. A che ora (finire) ________ la lezione?", correct: "finisce", distractors: ["finiamo", "finite", "finisco"] },
+
+            // --- Esercizio 2b ---
+            { q: "1. Lorenzo e Jane (abitare) ________ in periferia.", correct: "abitano", distractors: ["abita", "abitiamo", "abitate"] },
+            { q: "2. Tina (cominciare) ________ a lavorare la prossima settimana.", correct: "comincia", distractors: ["comincio", "cominciamo", "cominciano"] },
+            { q: "3a. I nostri amici non (partire) ________ subito.", correct: "partono", distractors: ["partiamo", "partite", "parte"] },
+            { q: "3b. Prima (noi - aspettare) ________ la telefonata di Gianni.", correct: "aspettiamo", distractors: ["aspettate", "aspetta", "aspetto"] },
+            { q: "4. Non (io - ricordare) ________ il nome del negozio.", correct: "ricordo", distractors: ["ricordi", "ricorda", "ricordiamo"] },
+            { q: "5. Di solito (noi - mangiare) ________ a casa.", correct: "mangiamo", distractors: ["mangiate", "mangiano", "mangio"] },
+            { q: "6. Non (io - capire) ________ il problema.", correct: "capisco", distractors: ["capisci", "capisce", "capiamo"] },
+            { q: "7. (Io - leggere) ________ i messaggi e-mail alla sera.", correct: "leggo", distractors: ["leggi", "legge", "leggiamo"] },
+            { q: "8. Adesso non abbiamo tempo, (noi - scrivere) ________ la relazione più tardi.", correct: "scriviamo", distractors: ["scrivete", "scrivono", "scrive"] },
+            { q: "9. (Voi - prendere) ________ un aperitivo con noi?", correct: "prendete", distractors: ["prendiamo", "prendono", "prendi"] },
+            { q: "10. Il museo non è lontano, (io - conoscere) ________ la strada.", correct: "conosco", distractors: ["conosci", "conosce", "conosciamo"] },
+
+            // --- Esercizio 2c ---
+            { q: "1. La bambina (dormire) ________.", correct: "dorme", distractors: ["dormi", "dormono", "dormiamo"] },
+            { q: "2. (Noi - preferire) ________ la musica classica.", correct: "preferiamo", distractors: ["preferite", "preferiscono", "preferisco"] },
+            { q: "3. Silvano (leggere) ________ un libro alla settimana.", correct: "legge", distractors: ["leggo", "leggi", "leggono"] },
+            { q: "4. (Tu - mangiare) ________ poco. Non hai fame?", correct: "mangi", distractors: ["mangia", "mangio", "mangiate"] },
+            { q: "5. (Voi - cercare) ________ casa?", correct: "cercate", distractors: ["cerchi", "cerco", "cerchiamo"] },
+            { q: "6. Il negozio (aprire) ________ alle 9.30.", correct: "apre", distractors: ["aprono", "apriamo", "apri"] },
+            { q: "7. (Io - comprare) ________ il pane e il latte.", correct: "compro", distractors: ["compri", "compra", "compriamo"] },
+            { q: "8. Oggi non (noi - studiare) ________.", correct: "studiamo", distractors: ["studiano", "studiate", "studi"] },
+            { q: "9. (Noi - viaggiare) ________ spesso per lavoro.", correct: "viaggiamo", distractors: ["viaggiate", "viaggiano", "viaggio"] },
+            { q: "10. L'ascensore non (funzionare) ________.", correct: "funziona", distractors: ["funzionano", "funzioni", "funziono"] },
+
+            // --- Esercizio 3 (Completa con il verbo adatto) ---
+            { q: "1. Antoine ________ in Francia.", correct: "vive", distractors: ["vivo", "vivono", "vivete"] },
+            { q: "2. (Io) ________ domani mattina.", correct: "parto", distractors: ["parti", "parte", "partiamo"] },
+            { q: "3. Rita ________ in banca.", correct: "lavora", distractors: ["lavori", "lavorano", "lavoro"] },
+            { q: "4. (Noi) ________ la radio al mattino.", correct: "ascoltiamo", distractors: ["ascoltate", "ascolta", "ascolto"] },
+            { q: "5. (Tu) non ________ mai i giornali.", correct: "leggi", distractors: ["leggo", "legge", "leggete"] },
+            { q: "6. Giulia e Susy non ________ carne.", correct: "mangiano", distractors: ["mangiamo", "mangiate", "mangia"] },
+            { q: "7. (Voi) ________ vicino a casa di Nicoletta.", correct: "abitate", distractors: ["abitiamo", "abitano", "abita"] },
+            { q: "8. (Noi) ________ un dizionario inglese-italiano.", correct: "cerchiamo", distractors: ["cercate", "cerco", "cerca"] },
+            { q: "9. (Io) non ________ a tennis.", correct: "gioco", distractors: ["giochi", "gioca", "giochiamo"] },
+            { q: "10. (Tu) ________ in modo pericoloso.", correct: "guidi", distractors: ["guida", "guido", "guidate"] },
+
+            // --- Esercizio 4 (Rispondi usando lo stesso verbo) ---
+            { q: "Soru: 'Studi informatica?'<br>Cevap: 'No, ________ matematica.'", correct: "studio", distractors: ["studi", "studia", "studiamo"] },
+            { q: "Soru: 'Quante lingue parla, Dottore?'<br>Cevap: '________ tre lingue.'", correct: "parlo", distractors: ["parla", "parli", "parliamo"] },
+            { q: "Soru: 'Prendi un caffè?'<br>Cevap: 'No, ________ un latte macchiato.'", correct: "prendo", distractors: ["prendi", "prende", "prendiamo"] },
+            { q: "Soru: 'Lavorano alla Fiat?'<br>Cevap: 'Sì, ________ lì da due anni.'", correct: "lavorano", distractors: ["lavoriamo", "lavorate", "lavora"] },
+            { q: "Soru: 'Ritornate questa sera?'<br>Cevap: 'Sì, ________ verso le 8.'", correct: "ritorniamo", distractors: ["ritornate", "ritornano", "ritorno"] },
+            { q: "Soru: 'Legge molto, Signor Bini?'<br>Cevap: 'No, ________ pochissimo.'", correct: "leggo", distractors: ["legge", "leggiamo", "leggi"] },
+            { q: "Soru: 'Mangiate al ristorante?'<br>Cevap: 'No, ________ a casa.'", correct: "mangiamo", distractors: ["mangiate", "mangiano", "mangio"] },
+            { q: "Soru: 'Abita lontano, Signorina?'<br>Cevap: 'No, ________ qui vicino.'", correct: "abito", distractors: ["abita", "abitiamo", "abitate"] },
+
+            // --- Esercizio 5 (Eşleştirme -> Soru/Cevap formatına çevrildi) ---
+            { q: "Soru: 'Guardate il film alla televisione stasera?'<br>Uygun cevabı seç:", correct: "No, ceniamo fuori.", distractors: ["No, resto a casa.", "Non abbiamo niente da dire.", "Prendo il treno domani."] },
+            { q: "Soru: 'Perché non parlate?'<br>Uygun cevabı seç:", correct: "Non abbiamo niente da dire.", distractors: ["No, di solito telefono.", "No, ceniamo fuori.", "Prendo il treno domani."] },
+            { q: "Soru: 'Scrivi spesso ai tuoi genitori?'<br>Uygun cevabı seç:", correct: "No, di solito telefono.", distractors: ["No, resto a casa.", "No, ceniamo fuori.", "Non abbiamo niente da dire."] },
+            { q: "Soru: 'Quando parte, Avvocato?'<br>Uygun cevabı seç:", correct: "Prendo il treno domani mattina alle 7.", distractors: ["No, resto a casa.", "No, di solito telefono.", "No, ceniamo fuori."] },
+            { q: "Soru: 'Usi l'auto oggi pomeriggio?'<br>Uygun cevabı seç:", correct: "No, resto a casa.", distractors: ["Prendo il treno domani.", "No, di solito telefono.", "Non abbiamo niente da dire."] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let shuffledQuestions = [];
+
+        function initQuiz() {
+            // Soruları karıştır ve hepsini kullan
+            shuffledQuestions = [...fullQuestionsDB].sort(() => Math.random() - 0.5);
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('result-screen').style.display = 'none';
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const currentQ = shuffledQuestions[currentQuestionIndex];
+            
+            // Progress
+            document.getElementById('progress').innerText = `Soru ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`;
+            
+            // Soruyu yaz
+            document.getElementById('question-text').innerHTML = currentQ.q;
+            
+            // Şıkları hazırla
+            let options = [...currentQ.distractors];
+            options.push(currentQ.correct);
+            
+            // Şıkları karıştır
+            options.sort(() => Math.random() - 0.5);
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = opt; // HTML desteği (br tagleri için)
+                btn.onclick = () => checkAnswer(btn, opt, currentQ.correct);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedBtn, selectedOption, correctOption) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(btn => btn.disabled = true);
+
+            if (selectedOption === correctOption) {
+                selectedBtn.classList.add('correct');
+                score++;
+            } else {
+                selectedBtn.classList.add('wrong');
+                allBtns.forEach(btn => {
+                    if (btn.innerHTML === correctOption) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            
+            const total = shuffledQuestions.length;
+            document.getElementById('final-score').innerText = `${score}/${total}`;
+            
+            const percentage = (score / total) * 100;
+            document.getElementById('final-score-circle').style.background = 
+                `conic-gradient(#2ecc71 ${percentage}%, #ecf0f1 ${percentage}%)`;
+
+            let msg = "";
+            if (percentage === 100) msg = "Mükemmel! Hepsini bildin.";
+            else if (percentage >= 80) msg = "Çok iyi! Konuya hakimsin.";
+            else if (percentage >= 50) msg = "İyi, ama biraz tekrar gerekli.";
+            else msg = "Daha fazla çalışmalısın.";
+            
+            document.getElementById('feedback-message').innerText = msg;
+        }
+
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Başlat
+        initQuiz();
+
+    </script>
+</body>
+</html>
