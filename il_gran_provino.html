@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Grande Provino - Casting Online</title>
+    <style>
+        /* GENEL AYARLAR */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 10px; /* Mobilde kenar boşluğunu azalttık */
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap; /* Sığmazsa alt satıra geç */
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* BAŞLIK ALANI */
+        .header-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        .header-image {
+            max-width: 80px;
+            height: auto;
+        }
+        h1 {
+            color: #d32f2f;
+            margin: 10px 0 5px 0;
+            font-size: 2.2em; /* Biraz küçülttük */
+        }
+        .subtitle {
+            font-style: italic;
+            color: #666;
+            font-size: 1em;
+        }
+        
+        /* KUTULAR (FORM VE ÖNİZLEME) ORTAK AYARLAR */
+        .form-box, .preview-box {
+            flex: 1 1 400px; /* Genişleyebilir ama en az 400px yer kaplasın (PC'de) */
+            width: 100%; /* Mobilde %100 genişlik */
+            box-sizing: border-box; /* Padding taşmasını engelle */
+            border-radius: 12px;
+        }
+
+        /* ----- SOL TARAF (FORM) ----- */
+        .form-box {
+            background: white;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-top: 6px solid #009246; /* İtalyan yeşili */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.95em;
+            color: #444;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px; /* Mobilde parmakla dokunmak kolay olsun diye büyüttük */
+            border: 2px solid #eee;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px; /* Mobilde zoom yapmayı engeller */
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #009246;
+            outline: none;
+        }
+        
+        /* FOTOĞRAF YÜKLEME ALANI */
+        .photo-upload-group {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed #009246;
+            text-align: center;
+        }
+
+        /* ----- SAĞ TARAF (ÖNİZLEME) ----- */
+        .preview-box {
+            background: #fffef0;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 3px double #d32f2f;
+            height: fit-content;
+            text-align: center;
+            /* Sticky (Yapışkan) özelliği sadece büyük ekranlar için aşağıda ayarlandı */
+        }
+
+        /* PROFİL RESMİ */
+        .profile-pic {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #009246;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 0 auto 15px auto;
+            display: block;
+            background-color: #ddd;
+        }
+
+        .preview-text {
+            line-height: 1.6;
+            font-size: 1.1em;
+            text-align: left;
+        }
+        .highlight {
+            color: #d32f2f;
+            font-weight: bold;
+            border-bottom: 2px dotted #d32f2f;
+        }
+
+        .btn-copy {
+            width: 100%;
+            padding: 15px; /* Buton mobilde kolay basılsın */
+            margin-top: 20px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            -webkit-appearance: none; /* iPhone buton stili düzeltmesi */
+        }
+        .btn-copy:hover {
+            background-color: #b71c1c;
+        }
+
+        /* --- MOBİL İÇİN ÖZEL AYARLAR (MEDIA QUERY) --- */
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column; /* Alt alta sırala */
+            }
+            
+            .form-box, .preview-box {
+                flex: none; /* Esnekliği kapat */
+                width: 100%; /* Tam genişlik */
+                margin-bottom: 20px;
+            }
+
+            .preview-box {
+                order: 2; /* Önizleme kutusu her zaman altta olsun */
+                position: static; /* Mobilde yapışkan özelliği kapat */
+            }
+
+            h1 {
+                font-size: 1.8em; /* Başlığı küçült */
+            }
+            
+            .preview-text {
+                font-size: 1em; /* Yazıyı biraz küçült */
+            }
+        }
+
+        /* --- MASAÜSTÜ İÇİN ÖZEL AYARLAR --- */
+        @media screen and (min-width: 769px) {
+            .preview-box {
+                position: sticky;
+                top: 20px; /* Sadece PC'de ekranı takip etsin */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-container">
+            <img src="https://cdn-icons-png.flaticon.com/512/3665/3665969.png" alt="Cinema Clapperboard" class="header-image">
+            <h1>🇮🇹 Il Grande Provino</h1>
+            <p class="subtitle">Completa la scheda per il casting. (Casting formunu doldurun.)</p>
+        </div>
+
+        <div class="form-box">
+            <h3>I Tuoi Dati (Bilgilerin)</h3>
+            
+            <div class="form-group photo-upload-group">
+                <label for="fotoInput">📸 Carica la tua foto:</label>
+                <input type="file" id="fotoInput" accept="image/*" onchange="caricaFoto(event)">
+                <small style="display:block; margin-top:5px; color:#666;">(Telefondan resim seç)</small>
+            </div>
+
+            <div class="form-group">
+                <label>Mi chiamo (Adın):</label>
+                <input type="text" id="nome" placeholder="Es: Maria" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Sono (Milliyet):</label>
+                <input type="text" id="nazionalita" placeholder="Es: turca / italiano" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Di (Memleket/Şehir):</label>
+                <input type="text" id="origine" placeholder="Es: Istanbul" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Ma abito e lavoro/studio a (Yaşadığın yer):</label>
+                <input type="text" id="residenza" placeholder="Es: Roma / in Italia" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Ho ... anni (Yaş):</label>
+                <input type="number" id="eta" placeholder="Es: 25" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Sono (Medeni Durum):</label>
+                <select id="stato" onchange="aggiornaTesto()">
+                    <option value="...">Seçiniz</option>
+                    <option value="single">single</option>
+                    <option value="sposato">sposato</option>
+                    <option value="sposata">sposata</option>
+                    <option value="fidanzato">fidanzato</option>
+                    <option value="fidanzata">fidanzata</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Lavoro (Faccio/Sono...):</label>
+                <input type="text" id="lavoro" placeholder="Es: l'insegnante / il medico" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Parlo (Diller):</label>
+                <input type="text" id="lingue" placeholder="Es: turco, inglese" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Sono una persona (Karakter):</label>
+                <input type="text" id="carattere" placeholder="Es: socievole, allegra" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Mi piace (Tekil):</label>
+                <input type="text" id="piace" placeholder="Es: la pizza" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Mi piacciono (Çoğul):</label>
+                <input type="text" id="piacciono" placeholder="Es: gli animali" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Non mi piace/piacciono:</label>
+                <input type="text" id="nonpiace" placeholder="Es: il traffico" oninput="aggiornaTesto()">
+            </div>
+            
+            <div class="form-group">
+                <label>Preferisco:</label>
+                <input type="text" id="preferisco" placeholder="Es: stare a casa" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Nel tempo libero:</label>
+                <input type="text" id="tempolibero" placeholder="Es: leggo libri" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Il mio colore preferito è:</label>
+                <input type="text" id="colore" placeholder="Es: il blu" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Attore/Attrice preferito/a:</label>
+                <input type="text" id="attore" placeholder="Es: Brad Pitt" oninput="aggiornaTesto()">
+            </div>
+
+            <div class="form-group">
+                <label>Nel film:</label>
+                <input type="text" id="film" placeholder="Es: Troy" oninput="aggiornaTesto()">
+            </div>
+        </div>
+
+        <div class="preview-box">
+            <h3 style="margin-top:0;">🎬 Scheda del Provino</h3>
+            
+            <img id="anteprimaFoto" class="profile-pic" src="https://via.placeholder.com/150?text=Foto" alt="Tua Foto">
+            
+            <div id="testoFinale" class="preview-text">
+                Buongiorno a tutti,<br><br>
+                mi chiamo <span class="highlight">...</span>, 
+                sono <span class="highlight">...</span>, 
+                di <span class="highlight">...</span>, 
+                ma abito e lavoro/studio a <span class="highlight">...</span>.
+                <br><br>
+                Ho <span class="highlight">...</span> anni e sono <span class="highlight">...</span>.
+                <br>
+                Faccio / Sono <span class="highlight">...</span>.
+                <br>
+                Parlo <span class="highlight">...</span>.
+                <br><br>
+                Sono (una persona) <span class="highlight">...</span>.
+                <br>
+                Mi piace <span class="highlight">...</span>.
+                <br>
+                Mi piacciono <span class="highlight">...</span>.
+                <br>
+                Non mi piace / piacciono <span class="highlight">...</span>, preferisco <span class="highlight">...</span>.
+                <br><br>
+                Nel tempo libero <span class="highlight">...</span>.
+                <br>
+                Il mio colore preferito è <span class="highlight">...</span>.
+                <br>
+                Il mio attore preferito / la mia attrice preferita è <span class="highlight">...</span> nel film <span class="highlight">...</span>.
+                <br><br>
+                <strong>Grazie a tutti e arrivederci!</strong>
+            </div>
+            <button class="btn-copy" onclick="copiaTesto()">📋 Copia il Testo</button>
+        </div>
+    </div>
+
+    <script>
+        function caricaFoto(event) {
+            const input = event.target;
+            const reader = new FileReader();
+            reader.onload = function(){
+                const dataURL = reader.result;
+                document.getElementById('anteprimaFoto').src = dataURL;
+            };
+            if(input.files && input.files[0]){
+                 reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function aggiornaTesto() {
+            const veri = {
+                nome: document.getElementById('nome').value || "...",
+                nazionalita: document.getElementById('nazionalita').value || "...",
+                origine: document.getElementById('origine').value || "...",
+                residenza: document.getElementById('residenza').value || "...",
+                eta: document.getElementById('eta').value || "...",
+                stato: document.getElementById('stato').value === "..." ? "..." : document.getElementById('stato').value,
+                lavoro: document.getElementById('lavoro').value || "...",
+                lingue: document.getElementById('lingue').value || "...",
+                carattere: document.getElementById('carattere').value || "...",
+                piace: document.getElementById('piace').value || "...",
+                piacciono: document.getElementById('piacciono').value || "...",
+                nonpiace: document.getElementById('nonpiace').value || "...",
+                preferisco: document.getElementById('preferisco').value || "...",
+                tempolibero: document.getElementById('tempolibero').value || "...",
+                colore: document.getElementById('colore').value || "...",
+                attore: document.getElementById('attore').value || "...",
+                film: document.getElementById('film').value || "..."
+            };
+
+            const metin = `
+                Buongiorno a tutti,<br><br>
+                mi chiamo <span class="highlight">${veri.nome}</span>, 
+                sono <span class="highlight">${veri.nazionalita}</span>, 
+                di <span class="highlight">${veri.origine}</span>, 
+                ma abito e lavoro/studio a <span class="highlight">${veri.residenza}</span>.
+                <br><br>
+                Ho <span class="highlight">${veri.eta}</span> anni e sono <span class="highlight">${veri.stato}</span>.
+                <br>
+                Faccio / Sono <span class="highlight">${veri.lavoro}</span>.
+                <br>
+                Parlo <span class="highlight">${veri.lingue}</span>.
+                <br><br>
+                Sono (una persona) <span class="highlight">${veri.carattere}</span>.
+                <br>
+                Mi piace <span class="highlight">${veri.piace}</span>.
+                <br>
+                Mi piacciono <span class="highlight">${veri.piacciono}</span>.
+                <br>
+                Non mi piace / piacciono <span class="highlight">${veri.nonpiace}</span>, preferisco <span class="highlight">${veri.preferisco}</span>.
+                <br><br>
+                Nel tempo libero <span class="highlight">${veri.tempolibero}</span>.
+                <br>
+                Il mio colore preferito è <span class="highlight">${veri.colore}</span>.
+                <br>
+                Il mio attore preferito / la mia attrice preferita è <span class="highlight">${veri.attore}</span> nel film <span class="highlight">${veri.film}</span>.
+                <br><br>
+                <strong>Grazie a tutti e arrivederci!</strong>
+            `;
+
+            document.getElementById('testoFinale').innerHTML = metin;
+        }
+
+        function copiaTesto() {
+            const range = document.createRange();
+            range.selectNode(document.getElementById("testoFinale"));
+            window.getSelection().removeAllRanges(); 
+            window.getSelection().addRange(range); 
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();
+            alert("Testo copiato!");
+        }
+    </script>
+
+</body>
+</html>
